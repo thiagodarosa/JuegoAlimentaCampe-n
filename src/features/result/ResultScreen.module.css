@@ -1,0 +1,101 @@
+.logo {
+  position: relative;
+  z-index: 1;
+  width: clamp(100px, 12vw, 150px);
+}
+
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: clamp(12px, 3vw, 40px);
+  width: min(1100px, 100%);
+  margin: auto 0;
+}
+
+.character {
+  justify-self: end;
+  width: min(100%, clamp(160px, 26vw, 320px));
+  filter: drop-shadow(0 14px 20px rgba(40, 0, 18, 0.45));
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.message {
+  font-size: clamp(1.8rem, 1rem + 2.6vw, 3.2rem);
+}
+
+.name {
+  margin: 0;
+  font-size: var(--fs-lead);
+  font-weight: 700;
+}
+
+.scoreBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 220px;
+  margin-top: 6px;
+  padding: 12px 28px 16px;
+  color: var(--gp-wine-800);
+  background: var(--gp-cream);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.scoreLabel {
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.score {
+  font-size: clamp(3.4rem, 2rem + 5vw, 6rem);
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats {
+  margin: 0;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.medal {
+  justify-self: start;
+  width: clamp(110px, 15vw, 190px);
+}
+
+@media (max-aspect-ratio: 1/1), (max-width: 760px) {
+  .layout {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'center center'
+      'character medal';
+  }
+
+  .center {
+    grid-area: center;
+  }
+
+  .character {
+    grid-area: character;
+    width: clamp(130px, 34vw, 260px);
+  }
+
+  .medal {
+    grid-area: medal;
+    width: clamp(100px, 26vw, 180px);
+  }
+}

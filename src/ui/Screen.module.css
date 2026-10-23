@@ -1,0 +1,45 @@
+/* Estructura común de las pantallas intermedias. */
+.screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(12px, 2.4vh, 28px);
+  min-height: 100%;
+  padding: calc(clamp(12px, 2.5vw, 28px) + var(--safe-top)) calc(clamp(16px, 3vw, 40px) + var(--safe-right))
+    calc(clamp(16px, 3vw, 32px) + var(--safe-bottom)) calc(clamp(16px, 3vw, 40px) + var(--safe-left));
+  overflow-x: hidden;
+}
+
+.heading {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: var(--fs-title);
+  font-weight: 900;
+  line-height: 1.02;
+  text-align: center;
+  color: var(--gp-gold);
+  text-shadow: 0 3px 0 rgba(60, 0, 25, 0.35);
+}
+
+.sub {
+  position: relative;
+  z-index: 1;
+  max-width: 46ch;
+  margin: -6px 0 0;
+  font-size: var(--fs-lead);
+  font-weight: 600;
+  text-align: center;
+}
+
+.actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 8px;
+}

@@ -1,0 +1,139 @@
+.notice {
+  margin: 0 0 8px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  background: #ffe2a8;
+  border-radius: 12px;
+}
+
+.section {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(106, 0, 50, 0.12);
+}
+
+.section:last-child {
+  border-bottom: 0;
+}
+
+.section h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  color: var(--gp-wine-700);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px 14px;
+  margin-bottom: 8px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.field input,
+.field textarea {
+  min-height: 46px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--gp-ink);
+  background: #fff;
+  border: 2px solid rgba(106, 0, 50, 0.22);
+  border-radius: 10px;
+  resize: vertical;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-weight: 700;
+}
+
+.toggle input {
+  width: 26px;
+  height: 26px;
+  accent-color: var(--gp-wine-700);
+}
+
+.help {
+  margin: 6px 0 0;
+  font-size: 0.88rem;
+  color: #6b5a5e;
+}
+
+.primary,
+.secondary {
+  min-height: 48px;
+  padding: 0 18px;
+  font-weight: 800;
+  border-radius: 999px;
+}
+
+.primary {
+  color: var(--gp-gold);
+  background: var(--gp-wine-700);
+  border: 0;
+}
+
+.secondary {
+  color: var(--gp-wine-700);
+  background: transparent;
+  border: 2px solid var(--gp-wine-700);
+}
+
+.secondary:disabled {
+  opacity: 0.4;
+}
+
+.saved {
+  align-self: center;
+  margin-right: auto;
+  font-weight: 800;
+  color: #1f7a45;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.metrics div {
+  padding: 10px 12px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.metrics dt {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6b5a5e;
+}
+
+.metrics dd {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--gp-wine-700);
+}
+
+.status {
+  margin: 0 0 10px;
+  padding-left: 18px;
+}

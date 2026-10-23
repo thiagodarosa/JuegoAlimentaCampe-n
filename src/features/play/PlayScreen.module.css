@@ -1,0 +1,296 @@
+/* La partida ocupa la pantalla completa y no se desplaza. */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: clamp(170px, 21vw, 270px) minmax(0, 1fr);
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  grid-template-areas:
+    'logo field'
+    'timer field'
+    'score field'
+    'champ field';
+  gap: 14px clamp(12px, 2vw, 22px);
+  padding: calc(14px + var(--safe-top)) calc(14px + var(--safe-right)) calc(14px + var(--safe-bottom))
+    calc(14px + var(--safe-left));
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+.logo {
+  grid-area: logo;
+  justify-self: center;
+  width: clamp(100px, 12vw, 150px);
+}
+
+/* ------------------------------- Cronómetro ------------------------------- */
+
+.timer {
+  grid-area: timer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timerTrack {
+  flex: 1;
+  height: 18px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+}
+
+.timerFill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gp-coral), var(--gp-gold));
+  border-radius: 999px;
+  transform-origin: left center;
+}
+
+.timerText {
+  min-width: 2.6ch;
+  font-size: clamp(1.4rem, 1rem + 1.2vw, 2rem);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.timerText small {
+  font-size: 0.6em;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.hurry .timerText {
+  color: var(--gp-coral);
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+/* --------------------------------- Puntaje -------------------------------- */
+
+.score {
+  grid-area: score;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 12px 10px;
+  color: var(--gp-wine-800);
+  background: linear-gradient(180deg, #ffe0a3 0%, var(--gp-gold) 100%);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 18px rgba(40, 0, 18, 0.35);
+}
+
+.scoreLabel {
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.scoreValue {
+  font-size: clamp(2rem, 1.4rem + 2vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  animation: bump 0.25s ease-out;
+}
+
+/* -------------------------------- Personaje ------------------------------- */
+
+.champion {
+  grid-area: champ;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 0;
+  pointer-events: none;
+}
+
+.championArt {
+  width: min(100%, 30vh);
+  max-height: 100%;
+  min-height: 0;
+  filter: drop-shadow(0 10px 16px rgba(40, 0, 18, 0.45));
+}
+
+.championName {
+  margin-top: 4px;
+  padding: 2px 14px;
+  font-weight: 900;
+  color: var(--gp-wine-800);
+  background: var(--gp-cream);
+  border-radius: 999px;
+}
+
+/* ---------------------------------- Campo --------------------------------- */
+
+.field {
+  grid-area: field;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(80% 60% at 50% 40%, rgba(255, 139, 123, 0.18) 0%, rgba(255, 139, 123, 0) 70%),
+    rgba(30, 0, 14, 0.28);
+  border: 2px solid rgba(243, 200, 121, 0.28);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 6px 30px rgba(20, 0, 10, 0.45);
+  touch-action: none;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  touch-action: none;
+  cursor: pointer;
+}
+
+/* --------------------------------- Overlays ------------------------------- */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.dim {
+  pointer-events: auto;
+  background: rgba(30, 0, 14, 0.7);
+  backdrop-filter: blur(3px);
+}
+
+.count {
+  font-size: clamp(7rem, 22vmin, 14rem);
+  font-weight: 900;
+  color: var(--gp-gold);
+  text-shadow: 0 8px 0 rgba(60, 0, 25, 0.5);
+  animation: countPop 0.9s ease-out both;
+}
+
+.prepare {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.timeUp {
+  padding: 0.15em 0.6em;
+  font-size: clamp(3.5rem, 12vmin, 7rem);
+  font-weight: 900;
+  color: var(--gp-wine-800);
+  text-transform: uppercase;
+  background: var(--gp-gold);
+  border-radius: 999px;
+  box-shadow: 0 12px 0 rgba(60, 0, 25, 0.4);
+  animation: countPop 0.6s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+.pauseCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(440px, calc(100% - 32px));
+  padding: 28px 24px;
+  text-align: center;
+  color: var(--gp-ink);
+  background: var(--gp-cream);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.pauseCard h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--gp-wine-700);
+}
+
+.pauseCard p {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+/* ----------------------------- Vertical / celular -------------------------- */
+
+@media (max-aspect-ratio: 1/1) {
+  .screen {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'logo timer score'
+      'field field field'
+      'champ champ champ';
+    gap: 10px 12px;
+  }
+
+  .logo {
+    width: clamp(80px, 16vw, 120px);
+  }
+
+  .score {
+    flex-direction: row;
+    gap: 8px;
+    padding: 6px 14px;
+  }
+
+  .scoreValue {
+    font-size: clamp(1.6rem, 1.2rem + 2vw, 2.4rem);
+  }
+
+  .champion {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    height: clamp(84px, 14vh, 170px);
+  }
+
+  .championArt {
+    width: auto;
+    height: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .scoreLabel {
+    display: none;
+  }
+}
+
+@keyframes bump {
+  0% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  to {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes countPop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,196 @@
+/* Tokens de color observados en granplus.com.br (ver docs/GUIA_VISUAL.md). */
+:root {
+  --gp-wine-900: #4d0225;
+  --gp-wine-800: #54032a;
+  --gp-wine-700: #6a0032;
+  --gp-wine-600: #84103f;
+  --gp-gold: #f3c879;
+  --gp-gold-dark: #c99a4b;
+  --gp-coral: #ff8b7b;
+  --gp-rose: #ca6976;
+  --gp-cream: #fbf1df;
+  --gp-white: #ffffff;
+  --gp-ink: #2b1418;
+
+  /* Colores funcionales (no de marca). */
+  --ok: #5cc98b;
+  --error: #b3261e;
+  --error-on-dark: #ffb4ab;
+
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --shadow-card: 0 18px 40px rgba(40, 0, 18, 0.35);
+  --shadow-btn: 0 6px 0 #a8793a, 0 12px 24px rgba(40, 0, 18, 0.35);
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+
+  --font: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Tipografía fluida. */
+  --fs-hero: clamp(2.3rem, 1.2rem + 4.2vw, 4.6rem);
+  --fs-title: clamp(1.7rem, 1rem + 2.6vw, 3rem);
+  --fs-lead: clamp(1.05rem, 0.9rem + 0.6vw, 1.4rem);
+  --fs-body: clamp(1rem, 0.95rem + 0.2vw, 1.15rem);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: 1.4;
+  color: var(--gp-white);
+  background: var(--gp-wine-800);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+/* En la app no se selecciona texto con toques largos (salvo en campos). */
+.app {
+  position: relative;
+  height: 100%;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+  font: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--gp-gold);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------- Botones --------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 60px;
+  padding: 0.7em 2em;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: clamp(1.1rem, 0.95rem + 0.6vw, 1.45rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    opacity 0.2s;
+}
+
+.btn-primary {
+  color: var(--gp-wine-800);
+  background: linear-gradient(180deg, #ffe0a3 0%, var(--gp-gold) 55%, #e9b45c 100%);
+  box-shadow: var(--shadow-btn);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(5px);
+  box-shadow:
+    0 1px 0 #a8793a,
+    0 6px 12px rgba(40, 0, 18, 0.35);
+}
+
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  min-height: 48px;
+  padding: 0.5em 1.2em;
+  font-size: 1rem;
+  color: var(--gp-white);
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.btn-ghost:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ---------------------------------- Fondo ---------------------------------- */
+
+.bg-brand {
+  background:
+    radial-gradient(120% 70% at 85% 0%, rgba(255, 139, 123, 0.55) 0%, rgba(255, 139, 123, 0) 60%),
+    radial-gradient(90% 60% at 0% 100%, rgba(243, 200, 121, 0.16) 0%, rgba(243, 200, 121, 0) 60%),
+    linear-gradient(180deg, var(--gp-wine-700) 0%, var(--gp-wine-900) 100%);
+}
+
+/* Patrón sutil de croquetas (ilustración propia). */
+.bg-pattern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23F3C879'%3E%3Ccircle cx='20' cy='22' r='9'/%3E%3Cpath d='M82 18a10 10 0 1 0 0.1 0zm0 6a4 4 0 1 1-0.1 0z' fill-rule='evenodd'/%3E%3Cpath d='M58 70l11 19H47z' stroke='%23F3C879' stroke-width='5' stroke-linejoin='round'/%3E%3Ccircle cx='100' cy='92' r='7'/%3E%3Ccircle cx='18' cy='96' r='6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 120px 120px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

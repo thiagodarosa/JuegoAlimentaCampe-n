@@ -1,0 +1,87 @@
+.wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  /* Busto: el cuerpo se recorta en el borde inferior del dibujo. */
+  overflow: hidden;
+  transform-origin: 50% 90%;
+  animation: breathe 2.6s ease-in-out infinite;
+}
+
+.happy {
+  animation: hop 0.42s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.oops {
+  animation: shake 0.45s ease-in-out;
+}
+
+.celebrate {
+  animation: celebrate 1.1s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025, 0.985);
+  }
+}
+
+@keyframes hop {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-9%) scale(1.06, 0.96);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-7deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+}
+
+@keyframes celebrate {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  30% {
+    transform: translateY(-6%) rotate(-4deg);
+  }
+  60% {
+    transform: translateY(0) rotate(3deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svg,
+  .happy,
+  .oops,
+  .celebrate {
+    animation: none;
+  }
+}

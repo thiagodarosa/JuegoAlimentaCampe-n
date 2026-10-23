@@ -1,0 +1,13 @@
+.logo {
+  display: block;
+  height: auto;
+  /* El PNG tiene margen transparente a los lados: se recorta con object-fit. */
+  aspect-ratio: 680 / 400;
+  object-fit: cover;
+  object-position: center;
+  -webkit-touch-callout: none;
+}
+
+.white {
+  filter: brightness(0) invert(1) drop-shadow(0 2px 6px rgba(40, 0, 18, 0.35));
+}
