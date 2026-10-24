@@ -16,8 +16,8 @@
   align-items: center;
   gap: 10px;
   padding: clamp(16px, 3vw, 32px) 16px clamp(18px, 3vw, 28px);
-  color: var(--gp-wine-800);
-  background: linear-gradient(180deg, #fff8ec 0%, var(--gp-cream) 100%);
+  color: var(--c-primary-dark);
+  background: linear-gradient(180deg, var(--c-surface-top) 0%, var(--c-surface) 100%);
   border: 4px solid transparent;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
@@ -60,11 +60,11 @@
   align-items: center;
   gap: 4px;
   padding: 12px 10px 14px;
-  color: var(--gp-wine-800);
-  background: var(--gp-cream);
+  color: var(--c-primary-dark);
+  background: var(--c-surface);
   border: 4px solid transparent;
   border-radius: var(--radius-md);
-  box-shadow: 0 10px 22px rgba(40, 0, 18, 0.3);
+  box-shadow: 0 10px 22px rgba(var(--c-shadow-rgb), 0.3);
   transition:
     transform 0.12s ease,
     border-color 0.15s,
@@ -87,11 +87,11 @@
 }
 
 .selected {
-  border-color: var(--gp-gold);
-  background: #fff;
+  border-color: var(--c-accent);
+  background: var(--c-surface-strong);
   box-shadow:
-    0 0 0 4px rgba(243, 200, 121, 0.45),
-    0 14px 28px rgba(40, 0, 18, 0.4);
+    0 0 0 4px rgba(var(--c-accent-rgb), 0.45),
+    0 14px 28px rgba(var(--c-shadow-rgb), 0.4);
   transform: translateY(-3px);
 }
 
@@ -105,8 +105,8 @@
   height: 38px;
   font-size: 1.2rem;
   font-weight: 900;
-  color: var(--gp-wine-800);
-  background: var(--gp-gold);
+  color: var(--c-on-accent);
+  background: var(--c-accent);
   border: 3px solid #fff;
   border-radius: 50%;
 }
@@ -142,4 +142,15 @@
   .speciesLabel {
     text-align: left;
   }
+}
+
+/*
+ * Fondo de las ilustraciones: un halo suave del color de la marca y una sombra
+ * leve separan los pelajes claros (siamés, persa) del fondo de la tarjeta.
+ */
+.speciesArt,
+.breedArt {
+  background: var(--art-glow);
+  border-radius: 50%;
+  filter: drop-shadow(0 4px 6px rgba(var(--c-shadow-rgb), 0.18));
 }

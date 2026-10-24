@@ -43,7 +43,13 @@ export class GameRenderer {
   private dpr = 1;
   private readonly reducedMotion: boolean;
 
-  constructor(private readonly canvas: HTMLCanvasElement) {
+  constructor(
+    private readonly canvas: HTMLCanvasElement,
+    /** Tipografía de los textos flotantes (la de la marca activa). */
+    private readonly font = 'Figtree, system-ui, sans-serif',
+    /** Campo claro: sombra suave bajo los objetos para que se recorten del fondo. */
+    private readonly lightField = false,
+  ) {
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('Canvas 2D no disponible');
     this.ctx = ctx;
@@ -144,6 +150,11 @@ export class GameRenderer {
       ctx.translate(o.x * this.width, o.y * this.height);
       ctx.rotate(o.rot + wobble);
       ctx.scale(scale, scale);
+      if (this.lightField) {
+        ctx.shadowColor = 'rgba(90, 20, 55, 0.35)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 3;
+      }
       ctx.drawImage(img, -size / 2, -size / 2, size, size);
       ctx.restore();
     }
@@ -167,7 +178,7 @@ export class GameRenderer {
     for (const tx of this.texts) {
       const k = tx.life / tx.maxLife;
       ctx.globalAlpha = k < 0.7 ? 1 : 1 - (k - 0.7) / 0.3;
-      ctx.font = `900 ${tx.size}px Figtree, system-ui, sans-serif`;
+      ctx.font = `900 ${tx.size}px ${this.font}`;
       ctx.lineWidth = 5;
       ctx.strokeStyle = 'rgba(60, 0, 25, 0.75)';
       ctx.strokeText(tx.text, tx.x, tx.y);

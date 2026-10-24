@@ -16,11 +16,12 @@
   z-index: 1;
   margin: 0;
   font-size: var(--fs-title);
-  font-weight: 900;
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
   line-height: 1.02;
   text-align: center;
-  color: var(--gp-gold);
-  text-shadow: 0 3px 0 rgba(60, 0, 25, 0.35);
+  color: var(--c-heading);
+  text-shadow: var(--heading-shadow);
 }
 
 .sub {

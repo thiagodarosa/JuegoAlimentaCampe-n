@@ -1,9 +1,11 @@
+import { isBrandId } from '../config/brands';
 import { DEFAULT_SETTINGS, type MedalTier, type Settings } from '../config/game.config';
 
 /**
- * Configuración de la activación (umbrales de medallas, textos de premio,
- * sonido). Se guarda en localStorage del dispositivo porque no contiene datos
- * personales y tiene que sobrevivir a un reinicio de la tablet.
+ * Configuración de la activación (marca activa, umbrales de medallas, textos
+ * de premio, sonido). Se guarda en localStorage del dispositivo porque no
+ * contiene datos personales y tiene que sobrevivir a un reinicio de la tablet.
+ * No se sincroniza entre dispositivos: cada tablet se configura por separado.
  */
 
 const KEY = 'granplus-campeon:settings:v1';
@@ -40,10 +42,18 @@ export function sanitizeSettings(raw: unknown): Settings {
         bronce: text(r.medals?.messages?.bronce, d.medals.messages.bronce),
       },
     },
-    prize: {
-      title: text(r.prize?.title, d.prize.title),
-      text: text(r.prize?.text, d.prize.text, 300),
+    // Versiones anteriores guardaban un único `prize`: era el de GranPlus y se conserva.
+    prizes: {
+      granplus: {
+        title: text(r.prizes?.granplus?.title ?? r.prize?.title, d.prizes.granplus.title),
+        text: text(r.prizes?.granplus?.text ?? r.prize?.text, d.prizes.granplus.text, 300),
+      },
+      biofresh: {
+        title: text(r.prizes?.biofresh?.title, d.prizes.biofresh.title),
+        text: text(r.prizes?.biofresh?.text, d.prizes.biofresh.text, 300),
+      },
     },
+    brand: isBrandId(r.brand) ? r.brand : d.brand,
     sound: typeof r.sound === 'boolean' ? r.sound : d.sound,
     anonymousMetrics: typeof r.anonymousMetrics === 'boolean' ? r.anonymousMetrics : d.anonymousMetrics,
     idleResetMs: Math.max(30_000, int(r.idleResetMs, d.idleResetMs)),

@@ -1,5 +1,13 @@
-/* Tokens de color observados en granplus.com.br (ver docs/GUIA_VISUAL.md). */
+/*
+ * Temas por marca. Los componentes usan solo tokens semánticos (--c-*, --btn-*,
+ * etc.); cada marca define sus valores. La marca activa se aplica con
+ * <html data-brand="…">. Sin atributo, rige GranPlus.
+ *
+ * GranPlus: colores observados en granplus.com.br (docs/GUIA_VISUAL.md).
+ * Biofresh: colores y tipografías observados en biofreshpet.com.br (docs/GUIA_VISUAL_BIOFRESH.md).
+ */
 :root {
+  /* Base de GranPlus (referencia de marca). */
   --gp-wine-900: #4d0225;
   --gp-wine-800: #54032a;
   --gp-wine-700: #6a0032;
@@ -9,8 +17,79 @@
   --gp-coral: #ff8b7b;
   --gp-rose: #ca6976;
   --gp-cream: #fbf1df;
-  --gp-white: #ffffff;
   --gp-ink: #2b1418;
+
+  /* Tokens semánticos: GranPlus. */
+  --c-bg-deep: var(--gp-wine-900);
+  --c-primary: var(--gp-wine-700);
+  --c-primary-dark: var(--gp-wine-800);
+  --c-primary-rgb: 106, 0, 50;
+  --c-on-primary: var(--gp-gold);
+  --c-accent: var(--gp-gold);
+  --c-accent-rgb: 243, 200, 121;
+  --c-on-accent: var(--gp-wine-800);
+  --c-highlight: var(--gp-coral);
+  --c-highlight-rgb: 255, 139, 123;
+  --c-secondary: var(--gp-rose);
+  --c-on-secondary: #ffffff;
+  --c-surface: var(--gp-cream);
+  --c-surface-top: #fff8ec;
+  --c-surface-strong: #ffffff;
+  --c-ink: var(--gp-ink);
+  --c-on-bg: #ffffff;
+  --c-shadow-rgb: 40, 0, 18;
+
+  --c-heading: var(--gp-gold);
+  --heading-shadow: 0 4px 0 rgba(60, 0, 25, 0.35);
+  --font: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: var(--font);
+  --heading-weight: 900;
+  --heading-tracking: -0.01em;
+
+  --bg-brand:
+    radial-gradient(120% 70% at 85% 0%, rgba(255, 139, 123, 0.55) 0%, rgba(255, 139, 123, 0) 60%),
+    radial-gradient(90% 60% at 0% 100%, rgba(243, 200, 121, 0.16) 0%, rgba(243, 200, 121, 0) 60%),
+    linear-gradient(180deg, var(--gp-wine-700) 0%, var(--gp-wine-900) 100%);
+  --pattern-color: var(--gp-gold);
+  --pattern-opacity: 0.07;
+
+  --btn-bg: linear-gradient(180deg, #ffe0a3 0%, var(--gp-gold) 55%, #e9b45c 100%);
+  --btn-fg: var(--gp-wine-800);
+  --btn-shadow: 0 6px 0 #a8793a, 0 12px 24px rgba(40, 0, 18, 0.35);
+  --btn-shadow-active: 0 1px 0 #a8793a, 0 6px 12px rgba(40, 0, 18, 0.35);
+  --btn-press: translateY(5px);
+  --ghost-fg: #ffffff;
+  --ghost-bg: rgba(255, 255, 255, 0.1);
+  --ghost-bg-active: rgba(255, 255, 255, 0.2);
+  --ghost-border: rgba(255, 255, 255, 0.35);
+
+  --score-bg: linear-gradient(180deg, #ffe0a3 0%, var(--gp-gold) 100%);
+  --score-fg: var(--gp-wine-800);
+  --timer-from: var(--gp-coral);
+  --timer-to: var(--gp-gold);
+  --track-bg: rgba(0, 0, 0, 0.3);
+  --track-border: rgba(255, 255, 255, 0.25);
+  --c-hurry: var(--gp-coral);
+  --c-count: var(--gp-gold);
+  --count-shadow: 0 8px 0 rgba(60, 0, 25, 0.5);
+  --field-bg:
+    radial-gradient(80% 60% at 50% 40%, rgba(255, 139, 123, 0.18) 0%, rgba(255, 139, 123, 0) 70%),
+    rgba(30, 0, 14, 0.28);
+  --field-border: rgba(243, 200, 121, 0.28);
+
+  --legend-good-bg: rgba(243, 200, 121, 0.16);
+  --legend-good-border: 2px solid rgba(243, 200, 121, 0.55);
+  --legend-bad-bg: rgba(255, 255, 255, 0.08);
+  --legend-bad-border: 2px dashed rgba(255, 255, 255, 0.35);
+
+  /* Accesorios de los personajes (bandana) y fondo de las ilustraciones en tarjetas. */
+  --c-scarf: #6a0032;
+  --c-scarf-dark: #4d0225;
+  --c-tag: #f3c879;
+  --c-tag-stroke: #c99a4b;
+  --art-glow: radial-gradient(closest-side, rgba(202, 105, 118, 0.22), rgba(202, 105, 118, 0));
+
+  --logo-scale: 1;
 
   /* Colores funcionales (no de marca). */
   --ok: #5cc98b;
@@ -19,15 +98,12 @@
 
   --radius-lg: 28px;
   --radius-md: 18px;
-  --shadow-card: 0 18px 40px rgba(40, 0, 18, 0.35);
-  --shadow-btn: 0 6px 0 #a8793a, 0 12px 24px rgba(40, 0, 18, 0.35);
+  --shadow-card: 0 18px 40px rgba(var(--c-shadow-rgb), 0.35);
 
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
-
-  --font: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
   /* Tipografía fluida. */
   --fs-hero: clamp(2.3rem, 1.2rem + 4.2vw, 4.6rem);
@@ -36,6 +112,89 @@
   --fs-body: clamp(1rem, 0.95rem + 0.2vw, 1.15rem);
 
   color-scheme: dark;
+}
+
+/* Biofresh: blanco, negro y pasteles; Nunito Sans + Playfair Display (como su sitio). */
+:root[data-brand='biofresh'] {
+  --bf-ink: #0b0f0e;
+  --bf-pink: #f9a8d4;
+  --bf-pink-soft: #fae7ed;
+  --bf-mint: #cff3e9;
+  --bf-sky: #90dfff;
+  --bf-navy: #1a2e45;
+
+  --c-bg-deep: #f6f6f6;
+  --c-primary: var(--bf-ink);
+  --c-primary-dark: var(--bf-ink);
+  --c-primary-rgb: 11, 15, 14;
+  --c-on-primary: #ffffff;
+  --c-accent: var(--bf-ink);
+  --c-accent-rgb: 144, 223, 255;
+  --c-on-accent: #ffffff;
+  --c-highlight: var(--bf-pink);
+  --c-highlight-rgb: 249, 168, 212;
+  --c-secondary: var(--bf-pink);
+  --c-on-secondary: var(--bf-ink);
+  --c-surface: #ffffff;
+  --c-surface-top: #ffffff;
+  --c-surface-strong: #ffffff;
+  --c-ink: #1f2937;
+  --c-on-bg: var(--bf-ink);
+  --c-shadow-rgb: 31, 41, 55;
+
+  --c-heading: var(--bf-ink);
+  --heading-shadow: none;
+  --font: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --heading-weight: 800;
+  --heading-tracking: 0;
+
+  --bg-brand:
+    radial-gradient(70% 55% at 100% 0%, rgba(249, 168, 212, 0.38) 0%, rgba(249, 168, 212, 0) 70%),
+    radial-gradient(70% 55% at 0% 100%, rgba(207, 243, 233, 0.9) 0%, rgba(207, 243, 233, 0) 70%),
+    radial-gradient(60% 50% at 0% 0%, rgba(144, 223, 255, 0.28) 0%, rgba(144, 223, 255, 0) 70%),
+    linear-gradient(180deg, #ffffff 0%, #f6f6f6 100%);
+  --pattern-color: var(--bf-ink);
+  --pattern-opacity: 0.035;
+
+  --btn-bg: var(--bf-ink);
+  --btn-fg: #ffffff;
+  --btn-shadow: 0 10px 22px rgba(31, 41, 55, 0.22);
+  --btn-shadow-active: 0 4px 10px rgba(31, 41, 55, 0.2);
+  --btn-press: scale(0.97);
+  --ghost-fg: var(--bf-ink);
+  --ghost-bg: rgba(255, 255, 255, 0.75);
+  --ghost-bg-active: #ffffff;
+  --ghost-border: rgba(11, 15, 14, 0.25);
+
+  --score-bg: var(--bf-ink);
+  --score-fg: #ffffff;
+  --timer-from: var(--bf-sky);
+  --timer-to: var(--bf-pink);
+  --track-bg: rgba(11, 15, 14, 0.12);
+  --track-border: rgba(11, 15, 14, 0.2);
+  --c-hurry: #c2255c;
+  --c-count: #ffffff;
+  --count-shadow: 0 6px 0 rgba(11, 15, 14, 0.45);
+  --field-bg:
+    radial-gradient(80% 60% at 50% 35%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(180deg, var(--bf-pink-soft) 0%, #f6c9dc 100%);
+  --field-border: rgba(249, 168, 212, 0.7);
+
+  --legend-good-bg: var(--bf-mint);
+  --legend-good-border: 2px solid #8fd9c3;
+  --legend-bad-bg: var(--bf-pink-soft);
+  --legend-bad-border: 2px dashed #eba3bf;
+
+  --c-scarf: #2b4c6f;
+  --c-scarf-dark: var(--bf-navy);
+  --c-tag: #ffffff;
+  --c-tag-stroke: #9aa5b1;
+  --art-glow: radial-gradient(closest-side, rgba(144, 223, 255, 0.38), rgba(144, 223, 255, 0));
+
+  --logo-scale: 1.35;
+
+  color-scheme: light;
 }
 
 *,
@@ -55,8 +214,8 @@ body {
   font-family: var(--font);
   font-size: var(--fs-body);
   line-height: 1.4;
-  color: var(--gp-white);
-  background: var(--gp-wine-800);
+  color: var(--c-on-bg);
+  background: var(--c-bg-deep);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
@@ -92,7 +251,7 @@ img {
 }
 
 :focus-visible {
-  outline: 3px solid var(--gp-gold);
+  outline: 3px solid var(--c-accent);
   outline-offset: 3px;
 }
 
@@ -131,16 +290,14 @@ img {
 }
 
 .btn-primary {
-  color: var(--gp-wine-800);
-  background: linear-gradient(180deg, #ffe0a3 0%, var(--gp-gold) 55%, #e9b45c 100%);
-  box-shadow: var(--shadow-btn);
+  color: var(--btn-fg);
+  background: var(--btn-bg);
+  box-shadow: var(--btn-shadow);
 }
 
 .btn-primary:active:not(:disabled) {
-  transform: translateY(5px);
-  box-shadow:
-    0 1px 0 #a8793a,
-    0 6px 12px rgba(40, 0, 18, 0.35);
+  transform: var(--btn-press);
+  box-shadow: var(--btn-shadow-active);
 }
 
 .btn-primary:disabled {
@@ -152,13 +309,13 @@ img {
   min-height: 48px;
   padding: 0.5em 1.2em;
   font-size: 1rem;
-  color: var(--gp-white);
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.35);
+  color: var(--ghost-fg);
+  background: var(--ghost-bg);
+  border: 2px solid var(--ghost-border);
 }
 
 .btn-ghost:active {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--ghost-bg-active);
 }
 
 .btn-block {
@@ -168,10 +325,16 @@ img {
 /* ---------------------------------- Fondo ---------------------------------- */
 
 .bg-brand {
-  background:
-    radial-gradient(120% 70% at 85% 0%, rgba(255, 139, 123, 0.55) 0%, rgba(255, 139, 123, 0) 60%),
-    radial-gradient(90% 60% at 0% 100%, rgba(243, 200, 121, 0.16) 0%, rgba(243, 200, 121, 0) 60%),
-    linear-gradient(180deg, var(--gp-wine-700) 0%, var(--gp-wine-900) 100%);
+  background: var(--bg-brand);
+}
+
+/* Títulos con la tipografía y el tratamiento de la marca. */
+.brand-heading {
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-tracking);
+  color: var(--c-heading);
+  text-shadow: var(--heading-shadow);
 }
 
 /* Patrón sutil de croquetas (ilustración propia). */
@@ -180,9 +343,12 @@ img {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.07;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23F3C879'%3E%3Ccircle cx='20' cy='22' r='9'/%3E%3Cpath d='M82 18a10 10 0 1 0 0.1 0zm0 6a4 4 0 1 1-0.1 0z' fill-rule='evenodd'/%3E%3Cpath d='M58 70l11 19H47z' stroke='%23F3C879' stroke-width='5' stroke-linejoin='round'/%3E%3Ccircle cx='100' cy='92' r='7'/%3E%3Ccircle cx='18' cy='96' r='6'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 120px 120px;
+  opacity: var(--pattern-opacity);
+  background-color: var(--pattern-color);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23000'%3E%3Ccircle cx='20' cy='22' r='9'/%3E%3Cpath d='M82 18a10 10 0 1 0 0.1 0zm0 6a4 4 0 1 1-0.1 0z' fill-rule='evenodd'/%3E%3Cpath d='M58 70l11 19H47z' stroke='%23000' stroke-width='5' stroke-linejoin='round'/%3E%3Ccircle cx='100' cy='92' r='7'/%3E%3Ccircle cx='18' cy='96' r='6'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-size: 120px 120px;
+  mask-size: 120px 120px;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23F3C879'%3E%3Ccircle cx='20' cy='22' r='9'/%3E%3Cpath d='M82 18a10 10 0 1 0 0.1 0zm0 6a4 4 0 1 1-0.1 0z' fill-rule='evenodd'/%3E%3Cpath d='M58 70l11 19H47z' stroke='%23F3C879' stroke-width='5' stroke-linejoin='round'/%3E%3Ccircle cx='100' cy='92' r='7'/%3E%3Ccircle cx='18' cy='96' r='6'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 @media (prefers-reduced-motion: reduce) {

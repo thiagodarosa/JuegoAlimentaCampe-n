@@ -37,6 +37,8 @@ export interface CatLook extends BaseLook {
   patternColor?: string;
   fluffy?: boolean;
   ruff?: boolean;
+  /** Contorno fino para pelajes claros que se confunden con fondos claros. */
+  outline?: string;
   round?: boolean;
   flatFace?: boolean;
 }
@@ -175,6 +177,7 @@ export const BREEDS: readonly Breed[] = [
       earInner: '#6B4A3E',
       pattern: 'points',
       patternColor: '#5E4136',
+      outline: '#8A6A55',
     },
   },
   {
@@ -185,7 +188,7 @@ export const BREEDS: readonly Breed[] = [
     look: {
       species: 'gato',
       fur: '#FBF6EF',
-      furShade: '#E9DFD2',
+      furShade: '#E2D5C4',
       muzzle: '#FFFFFF',
       nose: '#E79AA4',
       eye: '#D9822B',
@@ -194,6 +197,7 @@ export const BREEDS: readonly Breed[] = [
       pattern: 'none',
       fluffy: true,
       flatFace: true,
+      outline: '#8C7A68',
     },
   },
   {

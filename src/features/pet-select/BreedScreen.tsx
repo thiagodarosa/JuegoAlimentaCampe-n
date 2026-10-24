@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { playVoice } from '../../audio/sfx';
 import { breedsFor, findBreed, type Species } from '../../config/breeds';
 import { Character } from '../../characters/Character';
 import { TopBar } from '../../ui/TopBar';
@@ -36,7 +37,11 @@ export function BreedScreen({ species, initialBreedId, onConfirm, onBack, onCanc
               aria-checked={isSelected}
               data-breed={b.id}
               className={[styles.breedCard, isSelected ? styles.selected : ''].join(' ')}
-              onClick={() => setSelectedId(b.id)}
+              onClick={() => {
+                // Suena solo al elegir una raza distinta (no al volver a tocar la misma).
+                if (b.id !== selectedId) playVoice(species === 'perro' ? 'bark' : 'meow');
+                setSelectedId(b.id);
+              }}
             >
               <Character look={b.look} expression={isSelected ? 'happy' : 'neutral'} className={styles.breedArt} />
               <span className={styles.breedName}>{b.name}</span>

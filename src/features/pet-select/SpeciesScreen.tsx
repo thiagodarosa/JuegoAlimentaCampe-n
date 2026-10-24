@@ -1,3 +1,4 @@
+import { playVoice } from '../../audio/sfx';
 import { findBreed, SPECIES_COVER, type Species } from '../../config/breeds';
 import { Character } from '../../characters/Character';
 import { TopBar } from '../../ui/TopBar';
@@ -29,7 +30,10 @@ export function SpeciesScreen({ firstName, selected, onChoose, onCancel }: Props
             key={species}
             type="button"
             className={[styles.speciesCard, selected === species ? styles.selected : ''].join(' ')}
-            onClick={() => onChoose(species)}
+            onClick={() => {
+              playVoice(species === 'perro' ? 'bark' : 'meow');
+              onChoose(species);
+            }}
             data-species={species}
           >
             <Character look={findBreed(SPECIES_COVER[species])!.look} expression="happy" className={styles.speciesArt} />

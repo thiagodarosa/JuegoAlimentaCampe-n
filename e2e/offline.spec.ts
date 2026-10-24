@@ -44,4 +44,48 @@ test.describe('funcionamiento sin conexión', () => {
     await expect(page.getByLabel('Nombre completo')).toHaveValue('');
     await context.setOffline(false);
   });
+
+  test('Biofresh también funciona sin internet (logo, tipografías y envases locales)', async ({ page, context }) => {
+    await page.goto('/');
+    await page.evaluate(async () => {
+      await navigator.serviceWorker.ready;
+      localStorage.setItem('granplus-campeon:settings:v1', JSON.stringify({ brand: 'biofresh' }));
+    });
+    await page.reload();
+    await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);
+
+    await context.setOffline(true);
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('data-brand', 'biofresh');
+    const logoOk = await page.getByRole('img', { name: 'Biofresh' }).first().evaluate((img: HTMLImageElement) => img.naturalWidth > 0);
+    expect(logoOk).toBe(true);
+    const fontsOk = await page.evaluate(async () => {
+      await document.fonts.ready;
+      return document.fonts.check('800 20px "Playfair Display"') && document.fonts.check('400 16px "Nunito Sans"');
+    });
+    expect(fontsOk).toBe(true);
+
+    await freezeClock(page);
+    await register(page);
+    await chooseChampion(page, 'perro', /bulldog/i);
+    await page.getByRole('button', { name: '¡A jugar!' }).click();
+    await page.clock.runFor(3_200 + 30_000 + 2_000);
+    await page.getByRole('button', { name: 'Ver mi premio' }).click();
+    // Las grabaciones de ladrido y maullido también quedaron guardadas para usarse sin red.
+    const cachedSounds = await page.evaluate(async () => {
+      let n = 0;
+      for (const key of await caches.keys()) {
+        const reqs = await (await caches.open(key)).keys();
+        n += reqs.filter((r) => /\.mp3(\?|$)/.test(r.url)).length;
+      }
+      return n;
+    });
+    expect(cachedSounds).toBe(2);
+    const packs = page.getByRole('img', { name: /envase biofresh/i });
+    await expect(packs).toHaveCount(2);
+    for (const img of await packs.all()) {
+      await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+    }
+    await context.setOffline(false);
+  });
 });

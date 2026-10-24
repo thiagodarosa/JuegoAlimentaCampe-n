@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { Breed } from '../../config/breeds';
 import { GAME_CONFIG } from '../../config/game.config';
 import { Character, type Expression } from '../../characters/Character';
-import { play as playSfx } from '../../audio/sfx';
+import { play as playSfx, setTensionIntensity, startTension, stopTension } from '../../audio/sfx';
+import { useBrand } from '../../brand/BrandContext';
 import { GameEngine, type GameEvent, type GameStats } from '../../game/engine';
 import { DISTRACTOR_MESSAGES, KIBBLE_CHEERS } from '../../game/items';
 import { GameRenderer } from '../../game/renderer';
@@ -31,6 +32,10 @@ interface Props {
 }
 
 export function PlayScreen({ breed, onFinish, onAbandon }: Props) {
+  // La marca se toma al montar la partida: un cambio posterior no la altera.
+  const brandAtStart = useRef(useBrand()).current;
+  const canvasFont = brandAtStart.canvasFont;
+  const lightField = brandAtStart.fieldTone === 'light';
   const areaRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const timerFillRef = useRef<HTMLDivElement>(null);
@@ -58,7 +63,7 @@ export function PlayScreen({ breed, onFinish, onAbandon }: Props) {
 
     const cfg = GAME_CONFIG;
     const engine = new GameEngine({ species: breed.species });
-    const renderer = new GameRenderer(canvas);
+    const renderer = new GameRenderer(canvas, canvasFont, lightField);
 
     let phaseNow: Phase = 'preparing';
     let disposed = false;
@@ -128,7 +133,8 @@ export function PlayScreen({ breed, onFinish, onAbandon }: Props) {
         clearTimeout(pauseTimer);
         setPhaseBoth('ended');
         setExpression('celebrate');
-        playSfx('end');
+        stopTension();
+        playSfx('timeUp');
         const stats = engine.getStats();
         endTimer = setTimeout(() => onFinishRef.current(stats), cfg.endBannerMs);
       }
@@ -162,6 +168,12 @@ export function PlayScreen({ breed, onFinish, onAbandon }: Props) {
         for (const ev of engine.drainEvents()) handleEvent(ev);
         renderer.updateEffects(dt);
         updateTimer(now);
+        // Tensión en los últimos segundos: una sola instancia que se intensifica.
+        const remaining = engine.remaining(now);
+        if (phaseNow === 'running' && remaining > 0 && remaining <= cfg.tensionFromMs) {
+          startTension();
+          setTensionIntensity(1 - remaining / cfg.tensionFromMs);
+        }
       }
 
       renderer.draw(engine);
@@ -187,6 +199,7 @@ export function PlayScreen({ breed, onFinish, onAbandon }: Props) {
 
     const pause = () => {
       const now = performance.now();
+      stopTension();
       if (phaseNow === 'running') engine.pause(now);
       if (phaseNow === 'running' || phaseNow === 'countdown' || phaseNow === 'resuming') {
         countdownStart = null;
@@ -227,6 +240,7 @@ export function PlayScreen({ breed, onFinish, onAbandon }: Props) {
 
     return () => {
       disposed = true;
+      stopTension();
       cancelAnimationFrame(raf);
       ro.disconnect();
       clearTimeout(pauseTimer);
@@ -241,7 +255,7 @@ export function PlayScreen({ breed, onFinish, onAbandon }: Props) {
       renderer.dispose();
       resumeRef.current = () => {};
     };
-  }, [breed.species]);
+  }, [breed.species, canvasFont, lightField]);
 
   const seconds = Math.round(GAME_CONFIG.durationMs / 1000);
 

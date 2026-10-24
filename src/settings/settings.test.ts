@@ -28,10 +28,10 @@ describe('configuración', () => {
   it('guarda y recupera cambios', () => {
     const s = structuredClone(DEFAULT_SETTINGS);
     s.medals.silverFrom = 120;
-    s.prize.title = '¡Gracias!';
+    s.prizes.granplus.title = '¡Gracias!';
     saveSettings(s);
     expect(loadSettings().medals.silverFrom).toBe(120);
-    expect(loadSettings().prize.title).toBe('¡Gracias!');
+    expect(loadSettings().prizes.granplus.title).toBe('¡Gracias!');
   });
 
   it('corrige umbrales inválidos', () => {
@@ -41,7 +41,46 @@ describe('configuración', () => {
   });
 
   it('no acepta textos vacíos', () => {
-    expect(sanitizeSettings({ prize: { title: '   ' } }).prize.title).toBe(DEFAULT_SETTINGS.prize.title);
+    expect(sanitizeSettings({ prizes: { granplus: { title: '   ' } } }).prizes.granplus.title).toBe(
+      DEFAULT_SETTINGS.prizes.granplus.title,
+    );
+  });
+});
+
+describe('marca activa', () => {
+  it('sin configuración guardada, la marca es GranPlus', () => {
+    expect(loadSettings().brand).toBe('granplus');
+    expect(DEFAULT_SETTINGS.brand).toBe('granplus');
+  });
+
+  it('la marca elegida se guarda y se recupera', () => {
+    saveSettings({ ...structuredClone(DEFAULT_SETTINGS), brand: 'biofresh' });
+    expect(loadSettings().brand).toBe('biofresh');
+  });
+
+  it('una marca desconocida vuelve a GranPlus', () => {
+    expect(sanitizeSettings({ brand: 'otra' }).brand).toBe('granplus');
+  });
+
+  it('cambiar de marca no altera umbrales ni mensajes de medallas', () => {
+    const before = sanitizeSettings({ medals: { silverFrom: 120, goldFrom: 260 } });
+    const after = sanitizeSettings({ ...before, brand: 'biofresh' });
+    expect(after.medals).toEqual(before.medals);
+  });
+
+  it('cada marca tiene su propio texto de premio', () => {
+    const s = sanitizeSettings(null);
+    expect(s.prizes.granplus.title).toContain('GranPlus');
+    expect(s.prizes.biofresh.title).toContain('Biofresh');
+  });
+
+  it('migra el texto de premio guardado por la versión anterior a GranPlus', () => {
+    const legacy = { prize: { title: 'Premio personalizado', text: 'Texto viejo' }, medals: { silverFrom: 90, goldFrom: 200 } };
+    const s = sanitizeSettings(legacy);
+    expect(s.prizes.granplus).toEqual({ title: 'Premio personalizado', text: 'Texto viejo' });
+    expect(s.prizes.biofresh.title).toContain('Biofresh');
+    expect(s.medals.silverFrom).toBe(90);
+    expect(s.brand).toBe('granplus');
   });
 });
 

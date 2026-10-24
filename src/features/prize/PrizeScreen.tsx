@@ -1,27 +1,15 @@
+import type { CSSProperties } from 'react';
+import { useBrand } from '../../brand/BrandContext';
+import { BRANDS, type BrandId } from '../../config/brands';
 import type { Species } from '../../config/breeds';
 import { useSettings } from '../../settings/SettingsContext';
 import { Logo } from '../../ui/Logo';
 import screen from '../../ui/Screen.module.css';
-import catGourmet from '../../assets/brand/pack-gato-gourmet-castrado.webp';
-import catMenu from '../../assets/brand/pack-gato-menu-gatito.webp';
-import dogGourmet from '../../assets/brand/pack-perro-gourmet-adulto.webp';
-import dogMenu from '../../assets/brand/pack-perro-menu-senior.webp';
 import styles from './PrizeScreen.module.css';
 
-const PACKS: Record<Species, { src: string; alt: string }[]> = {
-  perro: [
-    { src: dogMenu, alt: 'Envase GranPlus Menu para perros' },
-    { src: dogGourmet, alt: 'Envase GranPlus Gourmet para perros' },
-  ],
-  gato: [
-    { src: catMenu, alt: 'Envase GranPlus Menu para gatos' },
-    { src: catGourmet, alt: 'Envase GranPlus Gourmet para gatos' },
-  ],
-};
-
 /** Decodifica los envases con anticipación para que la pantalla de premio aparezca completa. */
-export function preloadPrizeImages(species: Species) {
-  for (const p of PACKS[species]) {
+export function preloadPrizeImages(brand: BrandId, species: Species) {
+  for (const p of BRANDS[brand].packs[species]) {
     const img = new Image();
     img.src = p.src;
     void img.decode?.().catch(() => {});
@@ -35,20 +23,29 @@ interface Props {
 
 export function PrizeScreen({ species, onFinish }: Props) {
   const { settings } = useSettings();
+  const brand = useBrand();
+  const prize = settings.prizes[brand.id];
   return (
     <main className={`${screen.screen} bg-brand bg-pattern`} data-testid="prize-screen">
       <div className={styles.layout}>
         <div className={styles.copy}>
           <Logo className={styles.logo} />
-          <h1 className={styles.title}>{settings.prize.title}</h1>
-          <p className={styles.text}>{settings.prize.text}</p>
+          <h1 className={styles.title}>{prize.title}</h1>
+          <p className={styles.text}>{prize.text}</p>
           <button type="button" className="btn btn-primary" onClick={onFinish}>
             Finalizar
           </button>
         </div>
         <div className={styles.packs}>
-          {PACKS[species].map((p, i) => (
-            <img key={p.src} src={p.src} alt={p.alt} className={`${styles.pack} ${i === 1 ? styles.back : ''}`} draggable={false} />
+          {brand.packs[species].map((p, i) => (
+            <img
+              key={p.src}
+              src={p.src}
+              alt={p.alt}
+              className={`${styles.pack} ${i === 1 ? styles.back : ''}`}
+              style={{ aspectRatio: brand.packAspect, '--pack-k': brand.packAspect / 0.52 } as CSSProperties}
+              draggable={false}
+            />
           ))}
         </div>
       </div>

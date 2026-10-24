@@ -8,7 +8,7 @@
   font-weight: 900;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--gp-wine-800);
+  color: var(--c-primary-dark);
   background: #9fe0b8;
   border-radius: 999px;
   transform: translateX(-50%);
@@ -30,7 +30,7 @@
 
 .version {
   position: absolute;
-  left: calc(10px + var(--safe-left));
+  right: calc(10px + var(--safe-right));
   bottom: calc(6px + var(--safe-bottom));
   z-index: 1;
   font-size: 0.7rem;
@@ -46,13 +46,13 @@
 }
 
 .keep {
-  color: var(--gp-wine-800);
-  background: var(--gp-gold);
+  color: var(--btn-fg);
+  background: var(--btn-bg);
   border: 0;
 }
 
 .cancel {
-  color: var(--gp-wine-700);
+  color: var(--c-primary);
   background: transparent;
-  border: 2px solid var(--gp-wine-700);
+  border: 2px solid var(--c-primary);
 }

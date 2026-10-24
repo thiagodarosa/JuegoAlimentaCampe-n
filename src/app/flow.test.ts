@@ -19,7 +19,7 @@ describe('flujo de la experiencia', () => {
   it('recorre todas las pantallas en orden', () => {
     let s = initialFlow();
     expect(s.step).toBe('registro');
-    s = apply(s, { type: 'register', participant });
+    s = apply(s, { type: 'register', participant, brand: 'granplus' });
     expect(s.step).toBe('especie');
     s = apply(s, { type: 'chooseSpecies', species: 'gato' });
     expect(s.step).toBe('raza');
@@ -45,19 +45,19 @@ describe('flujo de la experiencia', () => {
   });
 
   it('no acepta una raza de otra especie', () => {
-    const s = apply(initialFlow(), { type: 'register', participant }, { type: 'chooseSpecies', species: 'perro' }, { type: 'chooseBreed', breedId: 'siames' });
+    const s = apply(initialFlow(), { type: 'register', participant, brand: 'granplus' }, { type: 'chooseSpecies', species: 'perro' }, { type: 'chooseBreed', breedId: 'siames' });
     expect(s.step).toBe('raza');
     expect(s.breedId).toBeNull();
   });
 
   it('no pide los datos dos veces: registrar de nuevo no hace nada', () => {
-    const s = apply(initialFlow(), { type: 'register', participant });
-    const again = flowReducer(s, { type: 'register', participant: { ...participant, fullName: 'Otro Nombre' } });
+    const s = apply(initialFlow(), { type: 'register', participant, brand: 'granplus' });
+    const again = flowReducer(s, { type: 'register', participant: { ...participant, fullName: 'Otro Nombre' }, brand: 'granplus' });
     expect(again).toBe(s);
   });
 
   it('volver mantiene la especie y permite cambiarla', () => {
-    let s = apply(initialFlow(), { type: 'register', participant }, { type: 'chooseSpecies', species: 'perro' }, { type: 'chooseBreed', breedId: 'golden' });
+    let s = apply(initialFlow(), { type: 'register', participant, brand: 'granplus' }, { type: 'chooseSpecies', species: 'perro' }, { type: 'chooseBreed', breedId: 'golden' });
     s = apply(s, { type: 'back' });
     expect(s.step).toBe('raza');
     s = apply(s, { type: 'back' });
@@ -69,7 +69,7 @@ describe('flujo de la experiencia', () => {
   it('el reinicio borra los datos del participante y la partida', () => {
     const s = apply(
       initialFlow(),
-      { type: 'register', participant },
+      { type: 'register', participant, brand: 'granplus' },
       { type: 'chooseSpecies', species: 'perro' },
       { type: 'chooseBreed', breedId: 'golden' },
       { type: 'startGame' },
@@ -87,14 +87,14 @@ describe('flujo de la experiencia', () => {
   });
 
   it('cancelar a mitad de camino también borra todo', () => {
-    const s = apply(initialFlow(), { type: 'register', participant }, { type: 'chooseSpecies', species: 'perro' }, { type: 'reset' });
+    const s = apply(initialFlow(), { type: 'register', participant, brand: 'granplus' }, { type: 'chooseSpecies', species: 'perro' }, { type: 'reset' });
     expect(s).toEqual(initialFlow(1));
   });
 
   it('el modo demo permite jugar sin participante', () => {
     const s = apply(
       initialFlow(),
-      { type: 'startDemo' },
+      { type: 'startDemo', brand: 'granplus' },
       { type: 'chooseSpecies', species: 'perro' },
       { type: 'chooseBreed', breedId: 'golden' },
       { type: 'startGame' },
@@ -105,8 +105,21 @@ describe('flujo de la experiencia', () => {
   });
 
   it('cada partida tiene un identificador nuevo', () => {
-    const s = apply(initialFlow(), { type: 'register', participant }, { type: 'chooseSpecies', species: 'perro' }, { type: 'chooseBreed', breedId: 'golden' }, { type: 'startGame' });
+    const s = apply(initialFlow(), { type: 'register', participant, brand: 'granplus' }, { type: 'chooseSpecies', species: 'perro' }, { type: 'chooseBreed', breedId: 'golden' }, { type: 'startGame' });
     expect(s.runId).toBe(1);
+  });
+
+  it('la marca queda fija desde el registro hasta el reinicio', () => {
+    let s = apply(initialFlow(), { type: 'register', participant, brand: 'biofresh' });
+    expect(s.brand).toBe('biofresh');
+    s = apply(s, { type: 'chooseSpecies', species: 'gato' }, { type: 'chooseBreed', breedId: 'persa' }, { type: 'startGame' });
+    expect(s.brand).toBe('biofresh');
+    s = apply(s, { type: 'reset' });
+    expect(s.brand).toBeNull();
+  });
+
+  it('el modo demo también fija la marca', () => {
+    expect(flowReducer(initialFlow(), { type: 'startDemo', brand: 'biofresh' }).brand).toBe('biofresh');
   });
 
   it('el resultado solo se registra desde la partida', () => {

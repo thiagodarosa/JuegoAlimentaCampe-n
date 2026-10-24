@@ -103,9 +103,58 @@ Dependencias de ejecución: `react`, `react-dom` y `@fontsource/figtree`. Todo l
 - **Safari (iPad):** puede borrar el almacenamiento de sitios que no se usan durante varias semanas. Conviene
   abrir la app con conexión antes de cada activación.
 
+## Marcas
+
+- `settings.brand` (por defecto `granplus`) se guarda en `localStorage` junto con el resto de la configuración
+  de la promotora. Una configuración guardada por la versión anterior se migra sola: su texto de premio pasa a
+  ser el de GranPlus.
+- Al registrarse un participante, o al empezar el modo demo, la marca queda fija en el estado del flujo
+  (`flow.brand`). La marca visible es `flow.brand ?? settings.brand`. Así, un cambio guardado en plena
+  experiencia, desde otra pestaña o por cualquier otra vía, recién se ve después del reinicio.
+- `BrandProvider` pone `<html data-brand>`, el título y el `theme-color`. Los componentes usan solo tokens
+  semánticos de `global.css`, como `--c-heading`, `--btn-bg` o `--field-bg`.
+- **Campo de juego de Biofresh:** usa el rosa pastel de la marca. Como el campo es claro (`fieldTone: 'light'`),
+  los objetos se dibujan con una sombra suave para conservar el contraste.
+- **Premio de Biofresh:** muestra un envase de perro y uno de gato (PNG/WebP transparentes), con la misma
+  presentación que GranPlus. Adelante va el de la especie elegida.
+- **Compartido entre marcas:** umbrales y mensajes de medallas, porque las reglas son las mismas y los puntajes
+  tienen que ser comparables. **Propio de cada marca:** título y texto del premio, porque cada marca agradece
+  con su nombre.
+- **Limitación:** sin backend, la marca no se sincroniza entre tablets.
+- **Limitación:** el manifiesto de la PWA (nombre e ícono al instalarla) sigue siendo de GranPlus.
+
+## Sonido
+
+| Sonido | Cuándo | Garantías |
+|---|---|---|
+| Tensión (tic-tac + pulso grave) | Al quedar 10 s (`tensionFromMs`) | Instancia única; se acelera hasta el final; se corta al terminar, al pausar por visibilidad, al salir de la partida, al reiniciar y al silenciar |
+| Celebración (fanfarria + destellos) | Al montar la pantalla de resultado, junto con el confeti | Una vez por resultado (`resultId` = sesión + partida); los re-renders y el doble montaje de desarrollo no la repiten |
+| Ladrido / maullido (grabaciones CC0) | Al tocar la especie y al elegir una raza distinta | Un solo canal: el sonido nuevo corta el anterior; los toques a menos de 180 ms se ignoran; pasar el cursor o renderizar no suena. Si la grabación no carga, suena la versión sintetizada |
+| Fin de tiempo | Al aparecer "¡Tiempo!" | — |
+
+- **Implementación** (`src/audio/sfx.ts`):
+  - síntesis con Web Audio;
+  - el contexto se crea con el primer gesto del usuario, como exigen las reglas de reproducción automática;
+  - con el sonido desactivado no se crea nada y lo que suena se corta;
+  - el tic-tac se programa sobre el reloj de audio, con anticipación.
+- **Grabaciones de ladrido y maullido:**
+  - Son dos MP3 de BigSoundBank con licencia **CC0**: "Barking dog #3" y "Small mewing of a cat", de Joseph Sardin.
+  - Están guardados sin modificar en `src/assets/sounds/`, con su licencia en `LICENCIAS.md`.
+  - Se descargan al abrir la app y se decodifican una vez, al habilitarse el audio.
+  - Se reproduce siempre el mismo fragmento, con entrada y salida suaves: del ladrido, los dos primeros
+    ladridos; del maullido, el segundo maullido de la grabación (1,1–1,82 s). Así suena idéntico al elegir la especie y al elegir la raza. Los
+    fragmentos y los volúmenes están en `VOICE_CLIPS`.
+  - Si se pide el sonido mientras la grabación todavía se decodifica, se espera a que esté lista (hasta 1,2 s)
+    en lugar de usar la versión sintetizada. La versión sintetizada queda solo como respaldo si el archivo no
+    carga.
+  - Se usa MP3 porque Safari del iPad no reproduce bien OGG.
+  - El Service Worker los precachea para el modo sin conexión.
+- **Resto de los sonidos:** son **originales, generados por código**. No hay melodías ni efectos de Preguntados
+  u otros juegos.
+
 ## Pruebas
 
-### Unitarias e integración (Vitest + Testing Library): 108 pruebas
+### Unitarias e integración (Vitest + Testing Library): 147 pruebas
 
 | Archivo | Cubre |
 |---|---|
@@ -114,7 +163,10 @@ Dependencias de ejecución: `react`, `react-dom` y `@fontsource/figtree`. Todo l
 | `game/engine.test.ts` | 30 s exactos, marcas temporales con cuadros irregulares, fin único, +10/−5, mínimo 0, sin doble conteo, nada después del final ni en pausa, límites de objetos, sin rachas de distractores, siempre hay croquetas, dificultad progresiva, igualdad perro/gato, cambio de tamaño |
 | `app/flow.test.ts` | Orden del flujo, no saltear el registro, raza de la especie correcta, no repetir datos, reinicio y cancelación con borrado, modo demo |
 | `app/App.test.tsx` | Flujo completo con reloj simulado, personaje en la partida, ningún dato personal en el almacenamiento, cancelar, inactividad, pausa por visibilidad y cancelación por pausa larga |
-| `settings/settings.test.ts` | Umbrales de medallas, configuración dañada o inválida, métricas solo agregadas |
+| `settings/settings.test.ts` | Umbrales de medallas, configuración dañada o inválida, métricas solo agregadas, marca por defecto, persistencia de marca, premios por marca, migración de la configuración anterior |
+| `audio/sfx.test.ts` | Con un AudioContext falso: uso de las grabaciones con el fragmento correcto, maullido idéntico en cada toque, espera a la grabación si todavía carga, respaldo sintetizado si no carga, voces sin encimarse, celebración una vez por resultado, tensión de instancia única que se detiene sin dejar tics, silencio que corta todo |
+| `app/App.brand-audio.test.tsx` | GranPlus por defecto, Biofresh en todas las pantallas, cambio de marca en plena partida aplicado recién en la siguiente experiencia, umbrales compartidos, momentos exactos de ladrido/maullido, tensión desde los 10 s finales, celebración única, botón de sonido entre pantallas |
+| `characters/contrast.test.ts` | Contorno de siamés y persa con contraste ≥ 3:1 sobre las tarjetas de ambas marcas; rasgos de cada raza conservados |
 
 ### De punta a punta (Playwright, contra la compilación de producción)
 
@@ -125,7 +177,8 @@ Se ejecutan en 4 proyectos: tablet horizontal 1024×768, tablet vertical 768×10
 |---|---|
 | `e2e/flow.spec.ts` | En los 4 tamaños: flujo completo con validación, sin desplazamiento horizontal, sin scroll durante la partida, reinicio limpio y nada personal en el almacenamiento. También: puntaje nunca negativo y toques ignorados después del final. Guarda capturas |
 | `e2e/orientation.spec.ts` | Rotación en plena partida: no reinicia el cronómetro, no duplica el Canvas y lo ajusta a la densidad de píxeles |
-| `e2e/offline.spec.ts` | Sin red después de la primera carga: logo, fuente, partida completa y envases en el premio |
+| `e2e/offline.spec.ts` | Sin red después de la primera carga, con GranPlus y con Biofresh: logo, tipografías, grabaciones de sonido en caché, partida completa y envases en el premio |
+| `e2e/brand.spec.ts` | En tablet horizontal, tablet vertical y celular: GranPlus por defecto con su apariencia original; activar Biofresh desde el panel, persistencia al recargar, recorrido completo con capturas (`test-results/capturas/biofresh/`), volver a GranPlus; botón de sonido persistente |
 | `e2e/promoter.spec.ts` | Sin botón visible, atajo de teclado, gesto táctil oculto, umbrales y textos configurables, modo demo |
 
 Las pruebas E2E controlan el reloj (`page.clock`) para recorrer los 30 s sin esperar en tiempo real.
@@ -145,7 +198,10 @@ Las pruebas E2E controlan el reloj (`page.clock`) para recorrer los 30 s sin esp
 
 - Sin backend: no se conservan participaciones ni evidencia de consentimiento, y no hay sincronización entre tablets.
 - Política de privacidad provisoria, no aprobada.
-- El logo blanco es un recoloreo del PNG oficial con filtro CSS. Hay que pedir a marca la versión oficial.
+- El logo blanco de GranPlus es un recoloreo del PNG oficial con filtro CSS. Hay que pedir a marca la versión
+  oficial. El logo de Biofresh se usa sin alterar.
+- La marca activa no se sincroniza entre tablets, y el manifiesto de la PWA es de GranPlus.
+- No se verificó el audio en dispositivos reales: volumen, parlantes de tablet y Safari.
 - La paleta se tomó del sitio web, no de un manual de marca.
 - Los envases están en portugués (Brasil): son los provistos por el cliente.
 - El acceso a la promotora no es seguro (es intencional y está documentado).

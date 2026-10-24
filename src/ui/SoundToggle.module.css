@@ -1,0 +1,41 @@
+.toggle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  color: var(--ghost-fg);
+  background: var(--ghost-bg);
+  border: 2px solid var(--ghost-border);
+  border-radius: 50%;
+}
+
+.toggle svg {
+  width: 24px;
+  height: 24px;
+}
+
+.toggle[aria-pressed='false'] {
+  opacity: 0.75;
+}
+
+.toggle:active {
+  background: var(--ghost-bg-active);
+}
+
+/* Ubicaciones fuera de la barra superior (registro, partida, resultado y premio). */
+.cornerTop,
+.cornerBottom {
+  position: absolute;
+  z-index: 30;
+  left: calc(12px + var(--safe-left));
+}
+
+.cornerTop {
+  top: calc(12px + var(--safe-top));
+}
+
+.cornerBottom {
+  bottom: calc(12px + var(--safe-bottom));
+}

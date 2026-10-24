@@ -21,7 +21,7 @@
 }
 
 .logo {
-  width: clamp(120px, 16vw, 200px);
+  width: calc(clamp(120px, 16vw, 200px) * var(--logo-scale));
   margin-bottom: 4px;
   touch-action: none;
 }
@@ -29,11 +29,12 @@
 .title {
   margin: 0;
   font-size: var(--fs-hero);
-  font-weight: 900;
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
   line-height: 0.95;
-  letter-spacing: -0.01em;
-  color: var(--gp-gold);
-  text-shadow: 0 4px 0 rgba(60, 0, 25, 0.35);
+  letter-spacing: var(--heading-tracking);
+  color: var(--c-heading);
+  text-shadow: var(--heading-shadow);
 }
 
 .lead {
@@ -51,13 +52,13 @@
 
 .dog {
   width: clamp(140px, 19vw, 250px);
-  filter: drop-shadow(0 12px 18px rgba(40, 0, 18, 0.4));
+  filter: drop-shadow(0 12px 18px rgba(var(--c-shadow-rgb), 0.4));
 }
 
 .cat {
   width: clamp(120px, 16vw, 215px);
   margin-left: -4%;
-  filter: drop-shadow(0 12px 18px rgba(40, 0, 18, 0.4));
+  filter: drop-shadow(0 12px 18px rgba(var(--c-shadow-rgb), 0.4));
 }
 
 .card {
@@ -70,17 +71,18 @@
   max-width: 520px;
   justify-self: end;
   padding: clamp(18px, 3vw, 32px);
-  color: var(--gp-ink);
-  background: var(--gp-cream);
+  color: var(--c-ink);
+  background: var(--c-surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 }
 
 .cardTitle {
   margin: 0;
+  font-family: var(--font-heading);
   font-size: clamp(1.25rem, 1rem + 1vw, 1.7rem);
-  font-weight: 900;
-  color: var(--gp-wine-700);
+  font-weight: var(--heading-weight);
+  color: var(--c-primary);
 }
 
 .field {
@@ -91,7 +93,7 @@
 
 .label {
   font-weight: 800;
-  color: var(--gp-wine-800);
+  color: var(--c-primary-dark);
 }
 
 .input {
@@ -99,9 +101,9 @@
   min-height: 54px;
   padding: 0 16px;
   font-size: 1.15rem;
-  color: var(--gp-ink);
+  color: var(--c-ink);
   background: #fff;
-  border: 2px solid rgba(106, 0, 50, 0.22);
+  border: 2px solid rgba(var(--c-primary-rgb), 0.22);
   border-radius: 14px;
   transition:
     border-color 0.15s,
@@ -114,8 +116,8 @@
 
 .input:focus {
   outline: none;
-  border-color: var(--gp-wine-700);
-  box-shadow: 0 0 0 4px rgba(243, 200, 121, 0.7);
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 4px rgba(var(--c-accent-rgb), 0.7);
 }
 
 .hasError .input {
@@ -155,7 +157,7 @@
 .link {
   padding: 4px 0;
   font-weight: 800;
-  color: var(--gp-wine-700);
+  color: var(--c-primary);
   text-decoration: underline;
   text-underline-offset: 3px;
   background: none;
@@ -193,14 +195,14 @@
   width: 30px;
   height: 30px;
   background: #fff;
-  border: 2px solid rgba(106, 0, 50, 0.45);
+  border: 2px solid rgba(var(--c-primary-rgb), 0.45);
   border-radius: 8px;
   transition: background 0.15s;
 }
 
 .check input:checked + .box {
-  background: var(--gp-wine-700);
-  border-color: var(--gp-wine-700);
+  background: var(--c-primary);
+  border-color: var(--c-primary);
 }
 
 .check input:checked + .box::after {
@@ -210,13 +212,13 @@
   top: 4px;
   width: 8px;
   height: 15px;
-  border: solid var(--gp-gold);
+  border: solid var(--c-on-primary);
   border-width: 0 4px 4px 0;
   transform: rotate(45deg);
 }
 
 .check input:focus-visible + .box {
-  outline: 3px solid var(--gp-gold);
+  outline: 3px solid var(--c-accent);
   outline-offset: 2px;
 }
 
@@ -226,7 +228,7 @@
 
 .required {
   font-weight: 700;
-  color: var(--gp-wine-700);
+  color: var(--c-primary);
 }
 
 .optional {
@@ -299,7 +301,7 @@
   }
 
   .logo {
-    width: 120px;
+    width: calc(120px * var(--logo-scale));
   }
 }
 

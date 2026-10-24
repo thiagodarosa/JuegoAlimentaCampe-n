@@ -9,7 +9,7 @@
 .medal svg {
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 12px 18px rgba(40, 0, 18, 0.45));
+  filter: drop-shadow(0 12px 18px rgba(var(--c-shadow-rgb), 0.45));
   transform-origin: 50% 0;
   animation: swing 3s ease-in-out infinite 1.2s;
 }

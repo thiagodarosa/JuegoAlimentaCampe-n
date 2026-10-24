@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { GameResult } from '../../app/flow';
+import { playCelebration } from '../../audio/sfx';
 import type { Breed } from '../../config/breeds';
 import { Character } from '../../characters/Character';
 import { useSettings } from '../../settings/SettingsContext';
@@ -13,6 +14,8 @@ interface Props {
   breed: Breed;
   result: GameResult;
   firstName: string | null;
+  /** Identifica este resultado: la celebración suena una sola vez por resultado. */
+  resultId: string;
   onContinue: () => void;
 }
 
@@ -33,8 +36,13 @@ function useCountUp(target: number, durationMs = 1200) {
   return value;
 }
 
-export function ResultScreen({ breed, result, firstName, onContinue }: Props) {
+export function ResultScreen({ breed, result, firstName, resultId, onContinue }: Props) {
   const { settings } = useSettings();
+
+  // El sonido arranca junto con el confeti, que aparece al montar la pantalla.
+  useEffect(() => {
+    playCelebration(resultId);
+  }, [resultId]);
   const shown = useCountUp(result.score);
   const message = settings.medals.messages[result.medal];
 

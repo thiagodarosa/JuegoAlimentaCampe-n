@@ -20,7 +20,7 @@
 }
 
 .logo {
-  width: clamp(96px, 12vw, 150px);
+  width: calc(clamp(96px, 12vw, 150px) * var(--logo-scale));
 }
 
 @media (max-width: 480px) {
@@ -28,5 +28,17 @@
     min-height: 44px;
     padding: 0.4em 0.9em;
     font-size: 0.9rem;
+  }
+}
+
+/* En pantallas angostas "Volver" queda solo como flecha (el nombre accesible se mantiene). */
+@media (max-width: 480px) {
+  .backLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
   }
 }

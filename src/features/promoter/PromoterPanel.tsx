@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { BRAND_IDS, BRANDS } from '../../config/brands';
 import type { Settings } from '../../config/game.config';
 import { clearMetrics, loadMetrics } from '../../settings/metrics';
 import { useSettings } from '../../settings/SettingsContext';
@@ -58,6 +59,33 @@ export function PromoterPanel({ onClose, onStartDemo, onResetExperience }: Props
         seguridad</strong> y no debe usarse para proteger datos personales reales.
       </p>
 
+      <section className={styles.section} aria-labelledby="promoter-brand">
+        <h3 id="promoter-brand">Marca activa</h3>
+        <p className={styles.activeBrand} data-testid="active-brand">
+          Activa ahora: <strong>{BRANDS[settings.brand].name}</strong>
+        </p>
+        <div className={styles.brands} role="radiogroup" aria-label="Marca de la experiencia">
+          {BRAND_IDS.map((id) => (
+            <label key={id} className={[styles.brand, draft.brand === id ? styles.brandOn : ''].join(' ')}>
+              <input
+                type="radio"
+                name="brand"
+                value={id}
+                checked={draft.brand === id}
+                onChange={() => edit((d) => (d.brand = id))}
+              />
+              <img src={BRANDS[id].logo.src} alt="" className={styles.brandLogo} style={{ aspectRatio: BRANDS[id].logo.aspect }} />
+              <span>{BRANDS[id].name}</span>
+            </label>
+          ))}
+        </div>
+        <p className={styles.help}>
+          Se aplica al guardar, para todos los participantes de <strong>este dispositivo</strong>. Si hay una experiencia
+          en curso, el cambio se ve recién en la siguiente. La selección se guarda solo en esta tablet: no se sincroniza
+          con otras, hay que elegirla en cada una.
+        </p>
+      </section>
+
       <section className={styles.section}>
         <h3>Acciones rápidas</h3>
         <div className={styles.row}>
@@ -116,16 +144,29 @@ export function PromoterPanel({ onClose, onStartDemo, onResetExperience }: Props
       </section>
 
       <section className={styles.section}>
-        <h3>Pantalla de premio</h3>
+        <h3>Pantalla de premio · {BRANDS[draft.brand].name}</h3>
         <label className={styles.field}>
           <span>Título</span>
-          <input type="text" maxLength={80} value={draft.prize.title} onChange={(e) => edit((d) => (d.prize.title = e.target.value))} />
+          <input
+            type="text"
+            maxLength={80}
+            value={draft.prizes[draft.brand].title}
+            onChange={(e) => edit((d) => (d.prizes[d.brand].title = e.target.value))}
+          />
         </label>
         <label className={styles.field}>
           <span>Texto</span>
-          <textarea rows={2} maxLength={300} value={draft.prize.text} onChange={(e) => edit((d) => (d.prize.text = e.target.value))} />
+          <textarea
+            rows={2}
+            maxLength={300}
+            value={draft.prizes[draft.brand].text}
+            onChange={(e) => edit((d) => (d.prizes[d.brand].text = e.target.value))}
+          />
         </label>
-        <p className={styles.help}>No prometas premios específicos que no estén confirmados por el responsable de la activación.</p>
+        <p className={styles.help}>
+          Cada marca tiene su propio texto de premio. Los umbrales y mensajes de medallas son compartidos. No prometas
+          premios específicos que no estén confirmados por el responsable de la activación.
+        </p>
       </section>
 
       <section className={styles.section}>

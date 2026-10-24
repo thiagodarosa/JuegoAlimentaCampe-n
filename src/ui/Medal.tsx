@@ -1,3 +1,4 @@
+import { useBrand } from '../brand/BrandContext';
 import type { MedalTier } from '../config/game.config';
 import styles from './Medal.module.css';
 
@@ -9,6 +10,7 @@ const COLORS: Record<MedalTier, { light: string; base: string; dark: string; lab
 
 export function Medal({ tier, className }: { tier: MedalTier; className?: string }) {
   const c = COLORS[tier];
+  const [ribbonLight, ribbonDark, ribbonStripe] = useBrand().medalRibbon;
   const id = `medal-${tier}`;
   return (
     <figure className={[styles.medal, className].filter(Boolean).join(' ')} data-medal={tier}>
@@ -21,9 +23,9 @@ export function Medal({ tier, className }: { tier: MedalTier; className?: string
           </radialGradient>
         </defs>
         {/* Cinta */}
-        <path d="M44 0 H74 L92 70 L66 78 Z" fill="#84103F" />
-        <path d="M116 0 H86 L68 70 L94 78 Z" fill="#6A0032" />
-        <path d="M58 0 H66 L82 66 L76 68 Z" fill="#F3C879" opacity="0.8" />
+        <path d="M44 0 H74 L92 70 L66 78 Z" fill={ribbonLight} />
+        <path d="M116 0 H86 L68 70 L94 78 Z" fill={ribbonDark} />
+        <path d="M58 0 H66 L82 66 L76 68 Z" fill={ribbonStripe} opacity="0.8" />
         {/* Medalla */}
         <circle cx="80" cy="128" r="62" fill={c.dark} />
         <circle cx="80" cy="124" r="60" fill={`url(#${id})`} />

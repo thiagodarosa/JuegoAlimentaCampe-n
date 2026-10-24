@@ -1,10 +1,10 @@
 import { useMemo, type CSSProperties } from 'react';
+import { useBrand } from '../brand/BrandContext';
 import styles from './Confetti.module.css';
-
-const COLORS = ['#F3C879', '#FF8B7B', '#FFFFFF', '#CA6976', '#FFE3A8'];
 
 /** Celebración liviana con CSS (sin librerías). */
 export function Confetti({ pieces = 36 }: { pieces?: number }) {
+  const colors = useBrand().confetti;
   const items = useMemo(
     () =>
       Array.from({ length: pieces }, (_, i) => ({
@@ -12,11 +12,11 @@ export function Confetti({ pieces = 36 }: { pieces?: number }) {
         delay: Math.random() * 1.2,
         duration: 2.4 + Math.random() * 1.8,
         size: 8 + Math.random() * 8,
-        color: COLORS[i % COLORS.length],
+        color: colors[i % colors.length],
         round: i % 3 === 0,
         drift: (Math.random() - 0.5) * 160,
       })),
-    [pieces],
+    [pieces, colors],
   );
 
   return (

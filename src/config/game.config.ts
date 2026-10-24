@@ -1,3 +1,5 @@
+import { DEFAULT_BRAND, type BrandId } from './brands';
+
 /**
  * Configuración central del juego. Todos los valores de puntuación, tiempos y
  * dificultad se ajustan desde acá.
@@ -80,14 +82,41 @@ export const GAME_CONFIG = {
   pauseTimeoutMs: 120_000,
   resumeCountdownSeconds: 3,
 
+  /** La ambientación de tensión empieza cuando queda este tiempo (ms). */
+  tensionFromMs: 10_000,
+
   /** Duración del cartel "¡TIEMPO!" antes de pasar al resultado. */
   endBannerMs: 1400,
 } as const;
 
 export type MedalTier = 'bronce' | 'plata' | 'oro';
 
+/** Textos de la pantalla de premio. */
+export interface PrizeTexts {
+  title: string;
+  text: string;
+}
+
+export interface Settings {
+  /** Marca activa en este dispositivo. */
+  brand: BrandId;
+  /** Umbrales y mensajes de medallas: compartidos por todas las marcas (las reglas del juego son las mismas). */
+  medals: {
+    silverFrom: number;
+    goldFrom: number;
+    messages: Record<MedalTier, string>;
+  };
+  /** Textos de premio por marca: cada marca agradece con su propio nombre. */
+  prizes: Record<BrandId, PrizeTexts>;
+  sound: boolean;
+  anonymousMetrics: boolean;
+  /** Sin actividad durante este tiempo, la experiencia vuelve al inicio y se borran los datos. */
+  idleResetMs: number;
+}
+
 /** Valores por defecto; la promotora puede cambiarlos desde su panel. */
-export const DEFAULT_SETTINGS = {
+export const DEFAULT_SETTINGS: Settings = {
+  brand: DEFAULT_BRAND,
   medals: {
     silverFrom: 150,
     goldFrom: 300,
@@ -95,19 +124,22 @@ export const DEFAULT_SETTINGS = {
       oro: '¡Tu campeón estuvo imparable!',
       plata: '¡Muy buen trabajo!',
       bronce: '¡Cada croqueta cuenta!',
-    } satisfies Record<MedalTier, string>,
+    },
   },
-  prize: {
-    title: '¡Gracias por jugar con GranPlus!',
-    text: 'Acercate a nuestra promotora para recibir tu premio y conocer más sobre la marca.',
+  prizes: {
+    granplus: {
+      title: '¡Gracias por jugar con GranPlus!',
+      text: 'Acercate a nuestra promotora para recibir tu premio y conocer más sobre la marca.',
+    },
+    biofresh: {
+      title: '¡Gracias por jugar con Biofresh!',
+      text: 'Acercate a nuestra promotora para recibir tu premio y conocer más sobre la marca.',
+    },
   },
   sound: true,
   anonymousMetrics: false,
-  /** Sin actividad durante este tiempo, la experiencia vuelve al inicio y se borran los datos. */
   idleResetMs: 90_000,
 };
-
-export type Settings = typeof DEFAULT_SETTINGS;
 
 /** Versión de la política de privacidad que acepta el participante. */
 export const PRIVACY_POLICY_VERSION = 'provisoria-2026-10';

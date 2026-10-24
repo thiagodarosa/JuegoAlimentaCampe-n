@@ -12,12 +12,12 @@
   padding: 8px 12px;
   font-style: italic;
   color: #6b5a5e;
-  background: rgba(106, 0, 50, 0.06);
+  background: rgba(var(--c-primary-rgb), 0.06);
   border-radius: 10px;
 }
 
 .content h3 {
   margin: 18px 0 6px;
   font-size: 1.05rem;
-  color: var(--gp-wine-700);
+  color: var(--c-primary);
 }

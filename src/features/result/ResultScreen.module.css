@@ -1,7 +1,7 @@
 .logo {
   position: relative;
   z-index: 1;
-  width: clamp(100px, 12vw, 150px);
+  width: calc(clamp(100px, 12vw, 150px) * var(--logo-scale));
 }
 
 .layout {
@@ -18,7 +18,7 @@
 .character {
   justify-self: end;
   width: min(100%, clamp(160px, 26vw, 320px));
-  filter: drop-shadow(0 14px 20px rgba(40, 0, 18, 0.45));
+  filter: drop-shadow(0 14px 20px rgba(var(--c-shadow-rgb), 0.45));
 }
 
 .center {
@@ -46,8 +46,8 @@
   min-width: 220px;
   margin-top: 6px;
   padding: 12px 28px 16px;
-  color: var(--gp-wine-800);
-  background: var(--gp-cream);
+  color: var(--c-primary-dark);
+  background: var(--c-surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 }

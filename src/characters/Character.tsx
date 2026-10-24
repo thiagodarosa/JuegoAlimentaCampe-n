@@ -20,8 +20,10 @@ interface CharacterProps {
   reactionKey?: number;
 }
 
-const WINE = '#6A0032';
-const GOLD = '#F3C879';
+/** Bandana y medalla del personaje: toman los colores de la marca activa (ver global.css). */
+const SCARF = { fill: 'var(--c-scarf, #6A0032)' };
+const SCARF_LINE = { stroke: 'var(--c-scarf-dark, #4D0225)' };
+const TAG = { fill: 'var(--c-tag, #F3C879)', stroke: 'var(--c-tag-stroke, #C99A4B)' };
 const INK = '#2B1418';
 const BLUSH = '#F07C86';
 
@@ -54,15 +56,23 @@ function Mirror({ children }: { children: ReactNode }) {
   );
 }
 
-function Body({ fur }: { fur: string }) {
+function Body({ fur, outline }: { fur: string; outline?: string }) {
   return (
     <>
-      <ellipse cx="100" cy="198" rx="58" ry="36" fill={fur} />
-      <path d="M56 160 Q100 178 144 160 L100 198 Z" fill={WINE} />
-      <path d="M56 160 Q100 178 144 160" fill="none" stroke="#4D0225" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="100" cy="184" r="7.5" fill={GOLD} stroke="#C99A4B" strokeWidth="1.5" />
+      <ellipse cx="100" cy="198" rx="58" ry="36" fill={fur} {...contour(outline)} />
+      <path d="M56 160 Q100 178 144 160 L100 198 Z" style={SCARF} />
+      <path d="M56 160 Q100 178 144 160" fill="none" style={SCARF_LINE} strokeWidth="3" strokeLinecap="round" />
+      <circle cx="100" cy="184" r="7.5" style={TAG} strokeWidth="1.5" />
     </>
   );
+}
+
+/**
+ * Contorno fino para pelajes muy claros (siamés, persa): mantiene la
+ * silueta visible sobre fondos claros sin cambiar el dibujo.
+ */
+function contour(color?: string) {
+  return color ? { stroke: color, strokeWidth: 3, strokeLinejoin: 'round' as const } : {};
 }
 
 /* ---------------------------------- Ojos ---------------------------------- */
@@ -252,7 +262,8 @@ function fluffyPath(cx: number, cy: number, rx: number, ry: number, spikes: numb
 }
 
 function Cat({ look, expr }: { look: CatLook; expr: Expression }) {
-  const { fur, furShade, muzzle, nose, eye, ear, earInner, pattern, patternColor = furShade } = look;
+  const { fur, furShade, muzzle, nose, eye, ear, earInner, pattern, patternColor = furShade, outline } = look;
+  const line = contour(outline);
   const earFill = pattern === 'points' ? patternColor : fur;
   const headRx = look.round ? 68 : 62;
   const headRy = look.round ? 58 : 54;
@@ -260,33 +271,33 @@ function Cat({ look, expr }: { look: CatLook; expr: Expression }) {
   const earShape =
     ear === 'small' ? (
       <>
-        <path d="M50 74 L56 38 L86 56 Z" fill={earFill} />
+        <path d="M50 74 L56 38 L86 56 Z" fill={earFill} {...line} />
         <path d="M58 66 L61 46 L78 57 Z" fill={earInner} />
       </>
     ) : ear === 'tufted' ? (
       <>
-        <path d="M44 80 L48 10 L90 52 Z" fill={earFill} />
+        <path d="M44 80 L48 10 L90 52 Z" fill={earFill} {...line} />
         <path d="M54 68 L55 30 L80 54 Z" fill={earInner} />
         <path d="M48 12 L44 0 M48 12 L52 1" stroke={patternColor} strokeWidth="2.5" strokeLinecap="round" />
       </>
     ) : (
       <>
-        <path d="M46 78 L52 20 L90 54 Z" fill={earFill} />
+        <path d="M46 78 L52 20 L90 54 Z" fill={earFill} {...line} />
         <path d="M56 68 L58 36 L80 56 Z" fill={earInner} />
       </>
     );
 
   return (
     <>
-      <Body fur={fur} />
+      <Body fur={fur} outline={outline} />
       {look.ruff && <path d={fluffyPath(100, 116, 82, 70, 16, 0.12)} fill={furShade} />}
       <Mirror>{earShape}</Mirror>
 
       {/* Cabeza */}
       {look.fluffy ? (
-        <path d={fluffyPath(100, 100, headRx + 8, headRy + 6, 18, 0.07)} fill={fur} />
+        <path d={fluffyPath(100, 100, headRx + 8, headRy + 6, 18, 0.07)} fill={fur} {...line} />
       ) : (
-        <ellipse cx="100" cy="100" rx={headRx} ry={headRy} fill={fur} />
+        <ellipse cx="100" cy="100" rx={headRx} ry={headRy} fill={fur} {...line} />
       )}
 
       {/* Patrones */}

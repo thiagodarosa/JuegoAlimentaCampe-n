@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 import { findBreed } from '../config/breeds';
-import { setSoundEnabled, unlockAudio } from '../audio/sfx';
+import { preloadVoiceClips, setSoundEnabled, stopAll, unlockAudio } from '../audio/sfx';
+import { BrandProvider } from '../brand/BrandContext';
 import type { GameStats } from '../game/engine';
 import { BreedScreen } from '../features/pet-select/BreedScreen';
 import { InstructionsScreen } from '../features/instructions/InstructionsScreen';
@@ -16,6 +17,7 @@ import { medalFor } from '../settings/settings';
 import { useSettings } from '../settings/SettingsContext';
 import { usePwa } from '../pwa/PwaContext';
 import { Modal } from '../ui/Modal';
+import { SoundToggle } from '../ui/SoundToggle';
 import { flowReducer, initialFlow } from './flow';
 import { useIdleTimer, usePromoterGesture } from './hooks';
 import styles from './App.module.css';
@@ -29,8 +31,23 @@ export function App() {
 
   useEffect(() => setSoundEnabled(settings.sound), [settings.sound]);
 
+  // Los navegadores solo permiten audio después de un gesto: cualquier toque lo habilita.
+  useEffect(() => {
+    preloadVoiceClips();
+    window.addEventListener('pointerdown', unlockAudio, { passive: true });
+    return () => window.removeEventListener('pointerdown', unlockAudio);
+  }, []);
+
+  /*
+   * Marca visible: la que quedó fijada al empezar la experiencia o, antes de
+   * empezar, la activa en la configuración. Un cambio en el panel nunca altera
+   * una experiencia o partida en curso.
+   */
+  const brand = flow.brand ?? settings.brand;
+
   const reset = useCallback(() => {
     setConfirmCancel(false);
+    stopAll();
     dispatch({ type: 'reset' });
   }, []);
 
@@ -68,7 +85,7 @@ export function App() {
         <RegistrationScreen
           onSubmit={(participant) => {
             unlockAudio();
-            dispatch({ type: 'register', participant });
+            dispatch({ type: 'register', participant, brand: settings.brand });
           }}
           logoHandlers={gesture.logoHandlers}
           footer={
@@ -107,7 +124,7 @@ export function App() {
           breed={breed}
           onPlay={() => {
             unlockAudio();
-            preloadPrizeImages(breed.species);
+            preloadPrizeImages(brand, breed.species);
             dispatch({ type: 'startGame' });
           }}
           onBack={() => dispatch({ type: 'back' })}
@@ -120,7 +137,13 @@ export function App() {
       break;
     case 'resultado':
       content = breed && flow.result && (
-        <ResultScreen breed={breed} result={flow.result} firstName={firstName} onContinue={() => dispatch({ type: 'showPrize' })} />
+        <ResultScreen
+          breed={breed}
+          result={flow.result}
+          firstName={firstName}
+          resultId={`${flow.sessionId}-${flow.runId}`}
+          onContinue={() => dispatch({ type: 'showPrize' })}
+        />
       );
       break;
     case 'premio':
@@ -129,52 +152,58 @@ export function App() {
   }
 
   return (
-    <div className="app" key={flow.sessionId} data-step={flow.step}>
-      {content}
+    <BrandProvider brand={brand}>
+      <div className="app" key={flow.sessionId} data-step={flow.step} data-brand={brand}>
+        {content}
 
-      {flow.demo && (
-        <div className={styles.demoBadge} role="status">
-          Modo demo · no se registra
-        </div>
-      )}
+        {/* En especie, raza e instrucciones el botón de sonido está en la barra superior. */}
+      {(flow.step === 'registro' || flow.step === 'resultado' || flow.step === 'premio') && <SoundToggle placement="top" />}
+      {flow.step === 'juego' && <SoundToggle placement="bottom" />}
 
-      {gesture.armed && (
-        <button type="button" className={styles.corner} onClick={gesture.onCornerTap} aria-label="Acceso de promotora" />
-      )}
+        {flow.demo && (
+          <div className={styles.demoBadge} role="status">
+            Modo demo · no se registra
+          </div>
+        )}
 
-      {confirmCancel && (
-        <Modal
-          title="¿Cancelar la participación?"
-          onClose={() => setConfirmCancel(false)}
-          footer={
-            <>
-              <button type="button" className={styles.keep} onClick={() => setConfirmCancel(false)}>
-                Seguir participando
-              </button>
-              <button type="button" className={styles.cancel} onClick={reset}>
-                Sí, cancelar
-              </button>
-            </>
-          }
-        >
-          <p>Se borran los datos ingresados y la experiencia vuelve al inicio.</p>
-        </Modal>
-      )}
+        {gesture.armed && (
+          <button type="button" className={styles.corner} onClick={gesture.onCornerTap} aria-label="Acceso de promotora" />
+        )}
 
-      {promoterOpen && (
-        <PromoterPanel
-          onClose={() => setPromoterOpen(false)}
-          onStartDemo={() => {
-            setPromoterOpen(false);
-            unlockAudio();
-            dispatch({ type: 'startDemo' });
-          }}
-          onResetExperience={() => {
-            setPromoterOpen(false);
-            reset();
-          }}
-        />
-      )}
-    </div>
+        {confirmCancel && (
+          <Modal
+            title="¿Cancelar la participación?"
+            onClose={() => setConfirmCancel(false)}
+            footer={
+              <>
+                <button type="button" className={styles.keep} onClick={() => setConfirmCancel(false)}>
+                  Seguir participando
+                </button>
+                <button type="button" className={styles.cancel} onClick={reset}>
+                  Sí, cancelar
+                </button>
+              </>
+            }
+          >
+            <p>Se borran los datos ingresados y la experiencia vuelve al inicio.</p>
+          </Modal>
+        )}
+
+        {promoterOpen && (
+          <PromoterPanel
+            onClose={() => setPromoterOpen(false)}
+            onStartDemo={() => {
+              setPromoterOpen(false);
+              unlockAudio();
+              dispatch({ type: 'startDemo', brand: settings.brand });
+            }}
+            onResetExperience={() => {
+              setPromoterOpen(false);
+              reset();
+            }}
+          />
+        )}
+      </div>
+    </BrandProvider>
   );
 }

@@ -1,3 +1,4 @@
+import type { BrandId } from '../config/brands';
 import { findBreed, type Species } from '../config/breeds';
 import type { MedalTier } from '../config/game.config';
 import type { Participant } from '../participant/types';
@@ -22,6 +23,12 @@ export interface FlowState {
   participant: Participant | null;
   /** Modo demostración: se juega sin registrar una participación real. */
   demo: boolean;
+  /**
+   * Marca fijada al comenzar la experiencia. Si la promotora cambia la marca
+   * activa, el cambio recién se ve en la experiencia siguiente. null: todavía
+   * no empezó (se muestra la marca activa de la configuración).
+   */
+  brand: BrandId | null;
   species: Species | null;
   breedId: string | null;
   result: GameResult | null;
@@ -32,8 +39,8 @@ export interface FlowState {
 }
 
 export type FlowAction =
-  | { type: 'register'; participant: Participant }
-  | { type: 'startDemo' }
+  | { type: 'register'; participant: Participant; brand: BrandId }
+  | { type: 'startDemo'; brand: BrandId }
   | { type: 'chooseSpecies'; species: Species }
   | { type: 'chooseBreed'; breedId: string }
   | { type: 'back' }
@@ -47,6 +54,7 @@ export function initialFlow(sessionId = 0): FlowState {
     step: 'registro',
     participant: null,
     demo: false,
+    brand: null,
     species: null,
     breedId: null,
     result: null,
@@ -63,10 +71,10 @@ export function flowReducer(state: FlowState, action: FlowAction): FlowState {
   switch (action.type) {
     case 'register':
       if (state.step !== 'registro') return state;
-      return { ...state, participant: action.participant, demo: false, step: 'especie' };
+      return { ...state, participant: action.participant, demo: false, brand: action.brand, step: 'especie' };
 
     case 'startDemo':
-      return { ...initialFlow(state.sessionId + 1), demo: true, step: 'especie' };
+      return { ...initialFlow(state.sessionId + 1), demo: true, brand: action.brand, step: 'especie' };
 
     case 'chooseSpecies':
       if (!canPlay(state) || (state.step !== 'especie' && state.step !== 'raza')) return state;

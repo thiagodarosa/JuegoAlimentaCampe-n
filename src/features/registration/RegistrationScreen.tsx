@@ -1,4 +1,5 @@
 import { useId, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
+import { useBrand } from '../../brand/BrandContext';
 import { findBreed } from '../../config/breeds';
 import { PRIVACY_POLICY_VERSION } from '../../config/game.config';
 import { Character } from '../../characters/Character';
@@ -40,6 +41,7 @@ export function RegistrationScreen({ onSubmit, logoHandlers, footer }: Props) {
   const [touched, setTouched] = useState<Partial<Record<RegistrationField, boolean>>>({});
   const [showPolicy, setShowPolicy] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const brand = useBrand();
   const id = useId();
 
   const set = <K extends keyof RegistrationValues>(key: K, value: RegistrationValues[K]) => {
@@ -171,7 +173,7 @@ export function RegistrationScreen({ onSubmit, logoHandlers, footer }: Props) {
             />
             <span className={styles.box} aria-hidden="true" />
             <span>
-              Quiero recibir novedades y promociones de GranPlus. <span className={styles.optional}>(opcional)</span>
+              Quiero recibir novedades y promociones de {brand.name}. <span className={styles.optional}>(opcional)</span>
             </span>
           </label>
         </div>

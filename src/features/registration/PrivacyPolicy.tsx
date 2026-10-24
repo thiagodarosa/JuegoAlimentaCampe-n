@@ -1,3 +1,4 @@
+import { useBrand } from '../../brand/BrandContext';
 import { PRIVACY_POLICY_VERSION } from '../../config/game.config';
 import { Modal } from '../../ui/Modal';
 import styles from './PrivacyPolicy.module.css';
@@ -8,6 +9,7 @@ import styles from './PrivacyPolicy.module.css';
  * la aplicación (ver docs/PRIVACIDAD_PENDIENTE.md).
  */
 export function PrivacyPolicy({ onClose }: { onClose: () => void }) {
+  const brand = useBrand();
   return (
     <Modal
       title="Política de privacidad"
@@ -33,7 +35,7 @@ export function PrivacyPolicy({ onClose }: { onClose: () => void }) {
       <h3>¿Para qué los usamos?</h3>
       <p>
         Para gestionar tu participación en el juego “¡Alimentá al campeón!” durante esta activación. Si marcás la
-        casilla opcional, también para enviarte comunicaciones promocionales de GranPlus.
+        casilla opcional, también para enviarte comunicaciones promocionales de {brand.name}.
       </p>
 
       <h3>¿Dónde se guardan?</h3>
