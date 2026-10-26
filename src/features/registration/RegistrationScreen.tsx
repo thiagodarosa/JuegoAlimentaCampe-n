@@ -17,8 +17,6 @@ import styles from './RegistrationScreen.module.css';
 
 interface Props {
   onSubmit: (participant: Participant) => void;
-  /** Gestos del logo para el acceso oculto al modo promotora. */
-  logoHandlers?: Pick<Parameters<typeof Logo>[0], 'onPointerDown' | 'onPointerUp' | 'onPointerLeave'>;
   footer?: ReactNode;
 }
 
@@ -35,7 +33,7 @@ const FIELD_ORDER: RegistrationField[] = ['fullName', 'phone', 'email', 'privacy
 const heroDog = findBreed('golden')!.look;
 const heroCat = findBreed('gato-mestizo')!.look;
 
-export function RegistrationScreen({ onSubmit, logoHandlers, footer }: Props) {
+export function RegistrationScreen({ onSubmit, footer }: Props) {
   const [values, setValues] = useState<RegistrationValues>(EMPTY);
   const [errors, setErrors] = useState<RegistrationErrors>({});
   const [touched, setTouched] = useState<Partial<Record<RegistrationField, boolean>>>({});
@@ -100,7 +98,7 @@ export function RegistrationScreen({ onSubmit, logoHandlers, footer }: Props) {
   return (
     <main className={`${styles.screen} bg-brand bg-pattern`}>
       <section className={styles.hero}>
-        <Logo className={styles.logo} {...logoHandlers} />
+        <Logo className={styles.logo} />
         <h1 className={styles.title}>¡Alimentá al campeón!</h1>
         <p className={styles.lead}>Sumá croquetas en 30 segundos y llevate un premio. ¿Te animás?</p>
         <div className={styles.pets} aria-hidden="true">

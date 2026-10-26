@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 /**
  * Ejecuta `onIdle` si no hay interacción durante `ms`. Se usa para que los
@@ -24,31 +24,21 @@ export function useIdleTimer(ms: number, enabled: boolean, onIdle: () => void) {
   }, [ms, enabled]);
 }
 
-const LONG_PRESS_MS = 3000;
-const ARMED_MS = 6000;
-const CORNER_TAPS = 3;
+const CORNER_TAPS = 6;
+/** Tiempo máximo entre un toque y el siguiente para que cuenten como seguidos. */
+const TAP_GAP_MS = 1500;
 
 /**
- * Acceso discreto al modo promotora: mantener presionado el logo de la
- * pantalla inicial 3 segundos y, dentro de los 6 segundos siguientes, tocar
- * 3 veces la esquina inferior derecha. En computadora también funciona
- * Ctrl + Shift + P.
- *
- * Esto evita aperturas accidentales; NO es un mecanismo de seguridad.
+ * Acceso discreto al modo promotora: tocar 6 veces seguidas la esquina
+ * superior derecha de la pantalla de registro. Después se pide el PIN
+ * (ver features/promoter/pin.ts). En computadora, Ctrl + Shift + P también
+ * abre el pedido de PIN.
  */
 export function usePromoterGesture(onUnlock: () => void, enabled: boolean) {
-  const [armed, setArmed] = useState(false);
-  const pressTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const armedTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const taps = useRef(0);
+  const lastTap = useRef(-Infinity);
   const cb = useRef(onUnlock);
   cb.current = onUnlock;
-
-  const disarm = useCallback(() => {
-    setArmed(false);
-    taps.current = 0;
-    clearTimeout(armedTimer.current);
-  }, []);
 
   useEffect(() => {
     if (!enabled) return;
@@ -62,37 +52,16 @@ export function usePromoterGesture(onUnlock: () => void, enabled: boolean) {
     return () => window.removeEventListener('keydown', onKey);
   }, [enabled]);
 
-  useEffect(
-    () => () => {
-      clearTimeout(pressTimer.current);
-      clearTimeout(armedTimer.current);
-    },
-    [],
-  );
-
-  const logoHandlers = {
-    onPointerDown: () => {
-      if (!enabled) return;
-      clearTimeout(pressTimer.current);
-      pressTimer.current = setTimeout(() => {
-        setArmed(true);
-        taps.current = 0;
-        clearTimeout(armedTimer.current);
-        armedTimer.current = setTimeout(disarm, ARMED_MS);
-      }, LONG_PRESS_MS);
-    },
-    onPointerUp: () => clearTimeout(pressTimer.current),
-    onPointerLeave: () => clearTimeout(pressTimer.current),
-  };
-
-  const onCornerTap = () => {
-    if (!armed) return;
-    taps.current += 1;
+  const onCornerTap = useCallback(() => {
+    if (!enabled) return;
+    const now = Date.now();
+    taps.current = now - lastTap.current <= TAP_GAP_MS ? taps.current + 1 : 1;
+    lastTap.current = now;
     if (taps.current >= CORNER_TAPS) {
-      disarm();
+      taps.current = 0;
       cb.current();
     }
-  };
+  }, [enabled]);
 
-  return { armed, logoHandlers, onCornerTap };
+  return { onCornerTap };
 }

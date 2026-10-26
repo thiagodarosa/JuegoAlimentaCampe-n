@@ -66,3 +66,22 @@ export async function freezeClock(page: Page) {
   await page.clock.install({ time: T0 });
   await page.clock.pauseAt(T0 + 60_000);
 }
+
+export const PROMOTER_PIN = '123456';
+
+/** Ingresa el PIN en el pedido de acceso y espera el panel de promotora. */
+export async function enterPromoterPin(page: Page, pin = PROMOTER_PIN) {
+  const prompt = page.getByRole('dialog', { name: 'Acceso de promotora' });
+  await expect(prompt).toBeVisible();
+  await prompt.getByLabel('Ingresá el PIN').fill(pin);
+  await prompt.getByRole('button', { name: 'Entrar' }).click();
+}
+
+/** Abre el panel con el atajo de computadora (Ctrl + Shift + P) y el PIN. */
+export async function openPromoterPanel(page: Page) {
+  await page.keyboard.press('Control+Shift+P');
+  await enterPromoterPin(page);
+  const panel = page.getByRole('dialog', { name: 'Modo promotora' });
+  await expect(panel).toBeVisible();
+  return panel;
+}

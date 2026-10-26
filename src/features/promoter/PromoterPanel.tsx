@@ -55,8 +55,9 @@ export function PromoterPanel({ onClose, onStartDemo, onResetExperience }: Props
       }
     >
       <p className={styles.notice}>
-        Este acceso oculto solo evita que un participante lo abra por accidente. <strong>No es un mecanismo de
-        seguridad</strong> y no debe usarse para proteger datos personales reales.
+        El acceso oculto y el PIN evitan que un participante abra el panel por accidente. <strong>No es un mecanismo
+        de seguridad</strong>: el PIN está dentro del código de la app y no debe usarse para proteger datos personales
+        reales.
       </p>
 
       <section className={styles.section} aria-labelledby="promoter-brand">

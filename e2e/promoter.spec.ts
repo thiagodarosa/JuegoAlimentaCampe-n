@@ -1,16 +1,17 @@
 import { expect, test } from '@playwright/test';
-import { openWithFrozenClock } from './helpers';
+import { enterPromoterPin, openPromoterPanel, openWithFrozenClock } from './helpers';
 
 test.describe('modo promotora', () => {
   test.beforeEach(({}, info) => test.skip(info.project.name !== 'escritorio', 'Se prueba una vez'));
 
-  test('no hay botón visible y se abre con el atajo; el modo demo no pide datos', async ({ page }) => {
+  test('no hay botón visible; el atajo pide el PIN; el modo demo no pide datos', async ({ page }) => {
     await openWithFrozenClock(page);
-    await expect(page.getByRole('button', { name: /promotora/i })).toHaveCount(0);
+    // La zona de acceso existe pero es invisible (sin texto ni fondo).
+    const corner = page.getByRole('button', { name: 'Acceso de promotora' });
+    await expect(corner).toHaveText('');
+    await expect(corner).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 
-    await page.keyboard.press('Control+Shift+P');
-    const panel = page.getByRole('dialog', { name: 'Modo promotora' });
-    await expect(panel).toBeVisible();
+    const panel = await openPromoterPanel(page);
     await expect(panel).toContainText('No es un mecanismo de seguridad');
 
     // Configura los umbrales de medalla.
@@ -38,18 +39,28 @@ test.describe('modo promotora', () => {
     await expect(page.getByText(/modo demo/i)).toHaveCount(0);
   });
 
-  test('gesto táctil oculto: mantener el logo y tocar la esquina', async ({ page }) => {
+  test('6 toques en la esquina superior derecha piden el PIN y abren el panel', async ({ page }) => {
     await openWithFrozenClock(page);
-    const logo = page.getByRole('img', { name: 'GranPlus' }).first();
-    const box = (await logo.boundingBox())!;
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-    await page.mouse.down();
-    await page.clock.runFor(3_100);
-    await page.mouse.up();
-    const corner = page.getByRole('button', { name: 'Acceso de promotora' });
-    await corner.click();
-    await corner.click();
-    await corner.click();
+    const { width } = page.viewportSize()!;
+    const tap = () => page.mouse.click(width - 20, 20);
+
+    for (let i = 0; i < 5; i++) await tap();
+    await expect(page.getByRole('dialog', { name: 'Acceso de promotora' })).toHaveCount(0);
+    await tap();
+
+    // Un PIN incorrecto no abre el panel.
+    await enterPromoterPin(page, '000000');
+    await expect(page.getByRole('alert')).toContainText('PIN incorrecto');
+    await expect(page.getByRole('dialog', { name: 'Modo promotora' })).toHaveCount(0);
+
+    await enterPromoterPin(page);
     await expect(page.getByRole('dialog', { name: 'Modo promotora' })).toBeVisible();
+  });
+
+  test('la esquina inferior derecha ya no abre nada', async ({ page }) => {
+    await openWithFrozenClock(page);
+    const { width, height } = page.viewportSize()!;
+    for (let i = 0; i < 6; i++) await page.mouse.click(width - 20, height - 20);
+    await expect(page.getByRole('dialog')).toHaveCount(0);
   });
 });

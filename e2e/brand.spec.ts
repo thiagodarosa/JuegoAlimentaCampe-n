@@ -1,10 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
-import { expectNoHorizontalScroll, openWithFrozenClock, register, runUntilTimeUp } from './helpers';
+import { expectNoHorizontalScroll, openPromoterPanel, openWithFrozenClock, register, runUntilTimeUp } from './helpers';
 
 async function activateBrand(page: Page, name: 'GranPlus' | 'Biofresh') {
-  await page.keyboard.press('Control+Shift+P');
-  const panel = page.getByRole('dialog', { name: 'Modo promotora' });
-  await expect(panel).toBeVisible();
+  const panel = await openPromoterPanel(page);
   await panel.getByRole('radio', { name: name }).check({ force: true });
   await panel.getByRole('button', { name: 'Guardar cambios' }).click();
   await expect(panel.getByTestId('active-brand')).toContainText(name);

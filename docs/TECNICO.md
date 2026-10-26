@@ -154,7 +154,7 @@ Dependencias de ejecución: `react`, `react-dom` y `@fontsource/figtree`. Todo l
 
 ## Pruebas
 
-### Unitarias e integración (Vitest + Testing Library): 147 pruebas
+### Unitarias e integración (Vitest + Testing Library): 156 pruebas
 
 | Archivo | Cubre |
 |---|---|
@@ -166,6 +166,7 @@ Dependencias de ejecución: `react`, `react-dom` y `@fontsource/figtree`. Todo l
 | `settings/settings.test.ts` | Umbrales de medallas, configuración dañada o inválida, métricas solo agregadas, marca por defecto, persistencia de marca, premios por marca, migración de la configuración anterior |
 | `audio/sfx.test.ts` | Con un AudioContext falso: uso de las grabaciones con el fragmento correcto, maullido idéntico en cada toque, espera a la grabación si todavía carga, respaldo sintetizado si no carga, voces sin encimarse, celebración una vez por resultado, tensión de instancia única que se detiene sin dejar tics, silencio que corta todo |
 | `app/App.brand-audio.test.tsx` | GranPlus por defecto, Biofresh en todas las pantallas, cambio de marca en plena partida aplicado recién en la siguiente experiencia, umbrales compartidos, momentos exactos de ladrido/maullido, tensión desde los 10 s finales, celebración única, botón de sonido entre pantallas |
+| `app/App.promoter.test.tsx` | PIN 123456, intentos y bloqueo de 30 s, 5 toques no abren y el sexto pide el PIN, toques que tienen que ser seguidos, PIN incorrecto, campo solo numérico y oculto, atajo con PIN, cancelar |
 | `characters/contrast.test.ts` | Contorno de siamés y persa con contraste ≥ 3:1 sobre las tarjetas de ambas marcas; rasgos de cada raza conservados |
 
 ### De punta a punta (Playwright, contra la compilación de producción)
@@ -179,7 +180,7 @@ Se ejecutan en 4 proyectos: tablet horizontal 1024×768, tablet vertical 768×10
 | `e2e/orientation.spec.ts` | Rotación en plena partida: no reinicia el cronómetro, no duplica el Canvas y lo ajusta a la densidad de píxeles |
 | `e2e/offline.spec.ts` | Sin red después de la primera carga, con GranPlus y con Biofresh: logo, tipografías, grabaciones de sonido en caché, partida completa y envases en el premio |
 | `e2e/brand.spec.ts` | En tablet horizontal, tablet vertical y celular: GranPlus por defecto con su apariencia original; activar Biofresh desde el panel, persistencia al recargar, recorrido completo con capturas (`test-results/capturas/biofresh/`), volver a GranPlus; botón de sonido persistente |
-| `e2e/promoter.spec.ts` | Sin botón visible, atajo de teclado, gesto táctil oculto, umbrales y textos configurables, modo demo |
+| `e2e/promoter.spec.ts` | Zona de acceso invisible, 6 toques en la esquina superior derecha, PIN incorrecto y correcto, atajo de teclado con PIN, la esquina inferior ya no abre nada, umbrales y textos configurables, modo demo |
 
 Las pruebas E2E controlan el reloj (`page.clock`) para recorrer los 30 s sin esperar en tiempo real.
 
@@ -204,4 +205,6 @@ Las pruebas E2E controlan el reloj (`page.clock`) para recorrer los 30 s sin esp
 - No se verificó el audio en dispositivos reales: volumen, parlantes de tablet y Safari.
 - La paleta se tomó del sitio web, no de un manual de marca.
 - Los envases están en portugués (Brasil): son los provistos por el cliente.
-- El acceso a la promotora no es seguro (es intencional y está documentado).
+- El acceso a la promotora (6 toques en la esquina superior derecha + PIN `123456`) no es seguridad real: el PIN
+  está en el código de la app y el bloqueo por intentos fallidos se reinicia al recargar. Se cambia en
+  `src/features/promoter/pin.ts`.

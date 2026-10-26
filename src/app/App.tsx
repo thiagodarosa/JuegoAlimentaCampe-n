@@ -7,6 +7,7 @@ import { BreedScreen } from '../features/pet-select/BreedScreen';
 import { InstructionsScreen } from '../features/instructions/InstructionsScreen';
 import { PlayScreen } from '../features/play/PlayScreen';
 import { PrizeScreen, preloadPrizeImages } from '../features/prize/PrizeScreen';
+import { PinPrompt } from '../features/promoter/PinPrompt';
 import { PromoterPanel } from '../features/promoter/PromoterPanel';
 import { RegistrationScreen } from '../features/registration/RegistrationScreen';
 import { ResultScreen } from '../features/result/ResultScreen';
@@ -27,6 +28,7 @@ export function App() {
   const { settings } = useSettings();
   const pwa = usePwa();
   const [promoterOpen, setPromoterOpen] = useState(false);
+  const [pinOpen, setPinOpen] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
 
   useEffect(() => setSoundEnabled(settings.sound), [settings.sound]);
@@ -52,9 +54,10 @@ export function App() {
   }, []);
 
   // Inactividad: se vuelve al inicio y se borran los datos (nunca durante la partida).
-  useIdleTimer(settings.idleResetMs, flow.step !== 'juego' && !promoterOpen, reset);
+  useIdleTimer(settings.idleResetMs, flow.step !== 'juego' && !promoterOpen && !pinOpen, reset);
 
-  const gesture = usePromoterGesture(() => setPromoterOpen(true), flow.step === 'registro' && !promoterOpen);
+  const accessEnabled = flow.step === 'registro' && !promoterOpen && !pinOpen;
+  const gesture = usePromoterGesture(() => setPinOpen(true), accessEnabled);
 
   const breed = findBreed(flow.breedId);
   const firstName = flow.participant?.fullName.split(' ')[0] ?? null;
@@ -87,7 +90,6 @@ export function App() {
             unlockAudio();
             dispatch({ type: 'register', participant, brand: settings.brand });
           }}
-          logoHandlers={gesture.logoHandlers}
           footer={
             <span className={styles.version} aria-hidden="true">
               v{__APP_VERSION__}
@@ -166,8 +168,25 @@ export function App() {
           </div>
         )}
 
-        {gesture.armed && (
-          <button type="button" className={styles.corner} onClick={gesture.onCornerTap} aria-label="Acceso de promotora" />
+        {/* Zona invisible: 6 toques seguidos piden el PIN de promotora. */}
+        {accessEnabled && (
+          <button
+            type="button"
+            className={styles.corner}
+            onClick={gesture.onCornerTap}
+            aria-label="Acceso de promotora"
+            tabIndex={-1}
+          />
+        )}
+
+        {pinOpen && (
+          <PinPrompt
+            onCancel={() => setPinOpen(false)}
+            onSuccess={() => {
+              setPinOpen(false);
+              setPromoterOpen(true);
+            }}
+          />
         )}
 
         {confirmCancel && (

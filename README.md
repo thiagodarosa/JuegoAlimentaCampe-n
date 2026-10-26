@@ -69,11 +69,14 @@ Mientras haya una versión nueva pendiente, en la pantalla inicial se ve un punt
 
 ## Modo promotora
 
-No hay ningún botón visible para entrar. Hay dos formas:
+No hay ningún botón visible para entrar. Desde la pantalla de registro:
 
-- **Tablet:** en la pantalla de registro, mantener presionado el logo de la marca **3 segundos**. Después, dentro
-  de los 6 segundos siguientes, tocar **3 veces la esquina inferior derecha**.
-- **Computadora:** `Ctrl + Shift + P` en la pantalla de registro.
+1. **Tablet o celular:** tocar **6 veces seguidas la esquina superior derecha**, con menos de 1,5 s entre toques.
+   **Computadora:** también sirve `Ctrl + Shift + P`.
+2. Se pide el **PIN numérico: `123456`**.
+
+Después de 5 PIN incorrectos seguidos, el ingreso queda bloqueado 30 segundos. Para cambiar el PIN, editá
+`PROMOTER_PIN` en [src/features/promoter/pin.ts](src/features/promoter/pin.ts) y volvé a publicar la app.
 
 Desde el panel se puede:
 
@@ -86,8 +89,10 @@ Desde el panel se puede:
 - ajustar el tiempo de **inactividad** antes de volver al inicio;
 - ver el estado de la conexión y del modo sin conexión, y aplicar actualizaciones.
 
-> Este acceso solo evita aperturas accidentales. **No es un mecanismo de seguridad**: no protege datos ni
-> configuraciones frente a alguien que conozca el gesto.
+> El gesto y el PIN evitan aperturas accidentales o por curiosidad. **No son un mecanismo de seguridad**: el PIN
+> está dentro del código de la app, que cualquiera con conocimientos técnicos puede leer, y el bloqueo se reinicia
+> al recargar la página. Alcanza para el uso en una activación, pero no sirve para proteger datos personales
+> reales.
 
 ## Marca activa: GranPlus o Biofresh
 

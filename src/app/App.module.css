@@ -15,14 +15,14 @@
   pointer-events: none;
 }
 
-/* Zona invisible para el acceso de promotora (solo existe mientras está armado). */
+/* Zona invisible para el acceso de promotora (esquina superior derecha del registro). */
 .corner {
   position: fixed;
+  top: var(--safe-top);
   right: var(--safe-right);
-  bottom: var(--safe-bottom);
   z-index: 45;
-  width: 88px;
-  height: 88px;
+  width: 72px;
+  height: 72px;
   padding: 0;
   background: transparent;
   border: 0;
